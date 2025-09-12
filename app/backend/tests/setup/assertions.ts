@@ -4,6 +4,7 @@
  * DO NOT write custom assertions in individual test files.
  */
 
+import { expect } from 'vitest';
 import { 
   ComparisonResult, 
   TransportPlan, 

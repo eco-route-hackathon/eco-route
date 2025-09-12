@@ -3,7 +3,7 @@
  * This file runs once before all tests
  */
 
-import { beforeAll, afterAll, beforeEach } from 'vitest';
+import { beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import { TEST_CONFIG } from './test-config';
 
 // Set test environment variables
@@ -23,7 +23,7 @@ beforeAll(() => {
 
 beforeEach(() => {
   // Clear all module caches to ensure test isolation
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 afterAll(() => {

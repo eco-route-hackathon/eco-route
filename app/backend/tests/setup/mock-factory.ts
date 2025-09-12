@@ -4,6 +4,7 @@
  * DO NOT create mocks directly in test files.
  */
 
+import { vi } from 'vitest';
 import { mockClient } from 'aws-sdk-client-mock';
 import { LocationClient, CalculateRouteCommand } from '@aws-sdk/client-location';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
@@ -22,16 +23,18 @@ export class MockFactory {
     // Default response for Tokyo to Osaka
     locationMock.on(CalculateRouteCommand).resolves({
       Summary: {
+        RouteBBox: [135.5023, 34.6937, 139.6503, 35.6762], // Bounding box
+        DataSource: 'Here',
         Distance: 520, // 520 km
         DurationSeconds: 25920, // 7.2 hours
-        DistanceUnit: 'Kilometers',
-        DurationUnit: 'Seconds'
+        DistanceUnit: 'Kilometers'
       },
       Legs: [{
         Distance: 520,
         DurationSeconds: 25920,
         StartPosition: [139.6503, 35.6762], // Tokyo
-        EndPosition: [135.5023, 34.6937] // Osaka
+        EndPosition: [135.5023, 34.6937], // Osaka
+        Steps: [] // Required property, empty for mock
       }]
     });
 
@@ -176,10 +179,10 @@ export class MockFactory {
     // This will be implemented when we have the actual Express app
     // For now, return a placeholder
     return {
-      post: jest.fn(),
-      get: jest.fn(),
-      use: jest.fn(),
-      listen: jest.fn()
+      post: vi.fn(),
+      get: vi.fn(),
+      use: vi.fn(),
+      listen: vi.fn()
     };
   }
 
@@ -188,8 +191,8 @@ export class MockFactory {
    * Call this in beforeEach() to ensure test isolation
    */
   static resetAllMocks() {
-    jest.clearAllMocks();
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetModules();
   }
 
   /**
