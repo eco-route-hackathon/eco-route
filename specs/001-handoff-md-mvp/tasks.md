@@ -7,7 +7,7 @@
 ```
 1. Load plan.md from feature directory
    → Tech stack: TypeScript 5.x, Node.js 22, React 18, AWS SDK v3
-   → Structure: Web app (frontend/, backend/, infra/)
+   → Structure: Web app (app/frontend/, app/backend/, app/infra/)
 2. Load optional design documents:
    → data-model.md: 8 entities identified
    → contracts/openapi.yaml: POST /compare endpoint
@@ -37,70 +37,70 @@
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Backend**: `backend/src/`, `backend/tests/`
-- **Frontend**: `frontend/src/`, `frontend/tests/`
-- **Data**: `data/` at repository root
-- **Infrastructure**: `infra/cdk/`
+- **Backend**: `app/backend/src/`, `app/backend/tests/`
+- **Frontend**: `app/frontend/src/`, `app/frontend/tests/`
+- **Data**: `app/data/` at repository root
+- **Infrastructure**: `app/infra/cdk/`
 
 ## Phase 3.1: Setup
-- [ ] T001 Create project structure with frontend/, backend/, data/, infra/ directories
-- [ ] T002 [P] Initialize backend with TypeScript, Express, AWS SDK v3 in backend/
-- [ ] T003 [P] Initialize frontend with React 18, Vite, Axios in frontend/
-- [ ] T004 [P] Set up TypeScript config with strict mode in backend/tsconfig.json and frontend/tsconfig.json
+- [ ] T001 Create project structure with app/frontend/, app/backend/, app/data/, app/infra/ directories
+- [ ] T002 [P] Initialize backend with TypeScript, Express, AWS SDK v3 in app/backend/
+- [ ] T003 [P] Initialize frontend with React 18, Vite, Axios in app/frontend/
+- [ ] T004 [P] Set up TypeScript config with strict mode in app/backend/tsconfig.json and frontend/tsconfig.json
 - [ ] T005 [P] Configure ESLint and Prettier for both frontend and backend
-- [ ] T006 Create shared types file at backend/src/lib/shared-types.ts with all interfaces from data-model.md
+- [ ] T006 Create shared types file at app/backend/src/lib/shared-types.ts with all interfaces from data-model.md
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
 ### Contract Tests
-- [ ] T007 [P] Create contract test for POST /compare endpoint in backend/tests/contract/compare.test.ts - must fail initially
-- [ ] T008 [P] Create contract test for error responses (400, 404, 500) in backend/tests/contract/errors.test.ts
+- [ ] T007 [P] Create contract test for POST /compare endpoint in app/backend/tests/contract/compare.test.ts - must fail initially
+- [ ] T008 [P] Create contract test for error responses (400, 404, 500) in app/backend/tests/contract/errors.test.ts
 
 ### Integration Tests
-- [ ] T009 [P] Create integration test for Tokyo→Osaka time priority scenario in backend/tests/integration/time-priority.test.ts
-- [ ] T010 [P] Create integration test for Tokyo→Osaka CO2 priority scenario in backend/tests/integration/co2-priority.test.ts
-- [ ] T011 [P] Create integration test for balanced weights scenario in backend/tests/integration/balanced-weights.test.ts
+- [ ] T009 [P] Create integration test for Tokyo→Osaka time priority scenario in app/backend/tests/integration/time-priority.test.ts
+- [ ] T010 [P] Create integration test for Tokyo→Osaka CO2 priority scenario in app/backend/tests/integration/co2-priority.test.ts
+- [ ] T011 [P] Create integration test for balanced weights scenario in app/backend/tests/integration/balanced-weights.test.ts
 
 ### Service Tests
-- [ ] T012 [P] Create test for RouteCalculator service with AWS Location mock in backend/tests/services/route-calculator.test.ts
-- [ ] T013 [P] Create test for CsvDataLoader service with S3 mock in backend/tests/services/csv-loader.test.ts
-- [ ] T014 [P] Create test for ScoreOptimizer service in backend/tests/services/score-optimizer.test.ts
+- [ ] T012 [P] Create test for RouteCalculator service with AWS Location mock in app/backend/tests/services/route-calculator.test.ts
+- [ ] T013 [P] Create test for CsvDataLoader service with S3 mock in app/backend/tests/services/csv-loader.test.ts
+- [ ] T014 [P] Create test for ScoreOptimizer service in app/backend/tests/services/score-optimizer.test.ts
 
 ## Phase 3.3: Core Implementation
 
 ### Data Models
-- [ ] T015 [P] Implement Location, LocationType models in backend/src/models/Location.ts
-- [ ] T016 [P] Implement TransportMode, ModeType models in backend/src/models/TransportMode.ts
-- [ ] T017 [P] Implement TransportLeg model in backend/src/models/TransportLeg.ts
-- [ ] T018 [P] Implement TransportPlan, PlanType models in backend/src/models/TransportPlan.ts
-- [ ] T019 [P] Implement ComparisonRequest, WeightFactors models in backend/src/models/ComparisonRequest.ts
-- [ ] T020 [P] Implement ComparisonResult, RouteRationale models in backend/src/models/ComparisonResult.ts
+- [ ] T015 [P] Implement Location, LocationType models in app/backend/src/models/Location.ts
+- [ ] T016 [P] Implement TransportMode, ModeType models in app/backend/src/models/TransportMode.ts
+- [ ] T017 [P] Implement TransportLeg model in app/backend/src/models/TransportLeg.ts
+- [ ] T018 [P] Implement TransportPlan, PlanType models in app/backend/src/models/TransportPlan.ts
+- [ ] T019 [P] Implement ComparisonRequest, WeightFactors models in app/backend/src/models/ComparisonRequest.ts
+- [ ] T020 [P] Implement ComparisonResult, RouteRationale models in app/backend/src/models/ComparisonResult.ts
 
 ### Services
-- [ ] T021 Implement CsvDataLoader service to load CSV from S3/local in backend/src/services/CsvDataLoader.ts
-- [ ] T022 Implement RouteCalculator service with Amazon Location integration in backend/src/services/RouteCalculator.ts
-- [ ] T023 Implement ScoreOptimizer service with weighted scoring in backend/src/services/ScoreOptimizer.ts
+- [ ] T021 Implement CsvDataLoader service to load CSV from S3/local in app/backend/src/services/CsvDataLoader.ts
+- [ ] T022 Implement RouteCalculator service with Amazon Location integration in app/backend/src/services/RouteCalculator.ts
+- [ ] T023 Implement ScoreOptimizer service with weighted scoring in app/backend/src/services/ScoreOptimizer.ts
 
 ### API Implementation
-- [ ] T024 Implement POST /compare handler in backend/src/api/compareHandler.ts
-- [ ] T025 Set up Express server with middleware in backend/src/server.ts
-- [ ] T026 Implement Lambda handler wrapper in backend/src/handler.ts
+- [ ] T024 Implement POST /compare handler in app/backend/src/api/compareHandler.ts
+- [ ] T025 Set up Express server with middleware in app/backend/src/server.ts
+- [ ] T026 Implement Lambda handler wrapper in app/backend/src/handler.ts
 
 ### Frontend Components
-- [ ] T027 [P] Create ComparisonForm component with validation in frontend/src/components/ComparisonForm.tsx
-- [ ] T028 [P] Create ResultsTable component for displaying results in frontend/src/components/ResultsTable.tsx
-- [ ] T029 Create ComparePage container component in frontend/src/pages/ComparePage.tsx
-- [ ] T030 [P] Implement ApiClient service for backend communication in frontend/src/services/ApiClient.ts
+- [ ] T027 [P] Create ComparisonForm component with validation in app/frontend/src/components/ComparisonForm.tsx
+- [ ] T028 [P] Create ResultsTable component for displaying results in app/frontend/src/components/ResultsTable.tsx
+- [ ] T029 Create ComparePage container component in app/frontend/src/pages/ComparePage.tsx
+- [ ] T030 [P] Implement ApiClient service for backend communication in app/frontend/src/services/ApiClient.ts
 
 ## Phase 3.4: Integration & Data
 
 ### CSV Data Setup
-- [ ] T031 Create initial CSV files (modes.csv, locations.csv, links.csv) in data/ directory with sample data
+- [ ] T031 Create initial CSV files (modes.csv, locations.csv, links.csv) in app/data/ directory with sample data
 - [ ] T032 Parse and integrate オープンデータ from 内航海運業データ into links.csv
 
 ### AWS Integration
-- [ ] T033 Create CDK stack for API Gateway + Lambda in infra/cdk/eco-route-stack.ts
-- [ ] T034 Configure S3 bucket and upload CSV data scripts in infra/scripts/
+- [ ] T033 Create CDK stack for API Gateway + Lambda in app/infra/cdk/eco-route-stack.ts
+- [ ] T034 Configure S3 bucket and upload CSV data scripts in app/infra/scripts/
 
 ## Phase 3.5: Polish & Documentation
 - [ ] T035 Run all tests and ensure 80%+ coverage for critical paths
