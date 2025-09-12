@@ -230,6 +230,49 @@ export class MockFactory {
       }
     };
   }
+
+  /**
+   * Create failing AWS Location mock for error testing
+   * Simulates AWS Location Service failures
+   */
+  static createFailingLocationMock() {
+    const locationMock = mockClient(LocationClient);
+    
+    locationMock.on(CalculateRouteCommand).rejects(new Error('AWS Location Service error: Unable to calculate route'));
+    
+    return locationMock;
+  }
+
+  /**
+   * Create failing S3 mock for error testing
+   * Simulates S3 service failures
+   */
+  static createFailingS3Mock() {
+    const s3Mock = mockClient(S3Client);
+    
+    s3Mock.on(GetObjectCommand).rejects(new Error('S3 Service error: Access denied or bucket not found'));
+    
+    return s3Mock;
+  }
+
+  /**
+   * Create corrupted data mock for error testing
+   * Returns invalid CSV data to simulate data corruption
+   */
+  static createCorruptedDataMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Return corrupted/invalid CSV data
+    const corruptedData = 'CORRUPTED_DATA_!@#$%^&*()_NOT_VALID_CSV';
+    
+    s3Mock.on(GetObjectCommand).resolves({
+      Body: {
+        transformToString: async () => corruptedData
+      } as any
+    });
+    
+    return s3Mock;
+  }
 }
 
 // Export type for TypeScript support

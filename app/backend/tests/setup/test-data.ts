@@ -82,6 +82,54 @@ export const TEST_SCENARIOS = {
     },
     expectedRecommendation: 'truck+ship' as PlanType,
     reason: 'Ship is more cost-effective'
+  },
+
+  // Alias for balanced (for backward compatibility)
+  balancedWeights: {
+    request: {
+      origin: 'Tokyo',
+      destination: 'Osaka',
+      weightKg: 1000,
+      weights: {
+        time: 0.33,
+        cost: 0.33,
+        co2: 0.34
+      }
+    },
+    expectedRecommendation: null,
+    reason: 'Balanced weights result depends on normalized scores'
+  }
+};
+
+/**
+ * Standard requests for testing (matches OpenAPI examples)
+ */
+export const STANDARD_REQUESTS = {
+  valid: {
+    origin: 'Tokyo',
+    destination: 'Osaka',
+    weightKg: 500,
+    weights: {
+      time: 0.5,
+      cost: 0.3,
+      co2: 0.2
+    }
+  },
+  missingOrigin: {
+    destination: 'Osaka',
+    weightKg: 500,
+    weights: { time: 0.5, cost: 0.3, co2: 0.2 }
+  },
+  missingDestination: {
+    origin: 'Tokyo',
+    weightKg: 500,
+    weights: { time: 0.5, cost: 0.3, co2: 0.2 }
+  },
+  invalidWeight: {
+    origin: 'Tokyo',
+    destination: 'Osaka',
+    weightKg: -100,
+    weights: { time: 0.5, cost: 0.3, co2: 0.2 }
   }
 };
 

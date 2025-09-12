@@ -203,6 +203,45 @@ export function assertNormalizedWeights(weights: { time: number; cost: number; c
 }
 
 /**
+ * Assert that error response has correct error code
+ */
+export function assertErrorCode(response: any, expectedCode: ErrorCode) {
+  expect(response).toBeDefined();
+  expect(response.error).toBeDefined();
+  expect(response.error.code).toBe(expectedCode);
+}
+
+/**
+ * Assert that error response has all required fields
+ */
+export function assertErrorHasRequiredFields(response: any) {
+  expect(response).toHaveProperty('error');
+  expect(response).toHaveProperty('requestId');
+  expect(response).toHaveProperty('timestamp');
+  
+  expect(response.error).toHaveProperty('code');
+  expect(response.error).toHaveProperty('message');
+}
+
+/**
+ * Assert that response matches OpenAPI example structure
+ */
+export function assertResponseMatchesOpenAPIExample(response: any) {
+  // Validate against OpenAPI schema structure
+  assertValidComparisonResult(response);
+  
+  // Additional checks for OpenAPI compliance
+  if (response.metadata) {
+    if (response.metadata.calculationTimeMs !== undefined) {
+      expect(typeof response.metadata.calculationTimeMs).toBe('number');
+    }
+    if (response.metadata.dataVersion !== undefined) {
+      expect(typeof response.metadata.dataVersion).toBe('string');
+    }
+  }
+}
+
+/**
  * Assert that a plan is more optimal than another for given criteria
  */
 export function assertPlanOptimality(
