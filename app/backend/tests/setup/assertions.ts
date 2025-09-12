@@ -154,7 +154,7 @@ export function assertValidErrorResponse(response: any): asserts response is Err
  */
 export function assertRecommendation(
   result: ComparisonResult,
-  expected: PlanType,
+  expected: PlanType | 'truck' | 'truck+ship',
   reason?: string
 ) {
   expect(result.recommendation).toBe(expected);
