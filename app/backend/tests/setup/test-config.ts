@@ -47,7 +47,10 @@ export const TEST_CONFIG = {
       routeCalculatorName: 'eco-route-test-calculator',
       s3BucketName: 'eco-route-test-data',
       s3DataPrefix: 'latest/'
-    }
+    },
+    // Alias properties for backward compatibility
+    locationCalculatorName: 'eco-route-test-calculator',
+    s3Bucket: 'eco-route-test-data'
   },
 
   // Data Source Configuration
