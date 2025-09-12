@@ -12,13 +12,19 @@
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\""
   },
-  "keywords": ["transportation", "logistics", "aws", "typescript"],
+  "keywords": [
+    "transportation",
+    "logistics",
+    "aws",
+    "typescript"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-location": "^3.600.0",
     "@aws-sdk/client-s3": "^3.600.0",
     "cors": "^2.8.5",
+    "csv-parse": "^6.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "winston": "^3.13.0"
