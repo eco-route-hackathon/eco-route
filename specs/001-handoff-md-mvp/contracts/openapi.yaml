@@ -1,0 +1,391 @@
+openapi: 3.1.0
+info:
+  title: Eco-Route API
+  description: Transport route comparison API for truck and ship transportation in Japan
+  version: 0.1.0
+  contact:
+    name: Eco-Route Team
+    email: support@eco-route.example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://api.eco-route.example.com
+    description: Production API
+
+paths:
+  /compare:
+    post:
+      summary: Compare transportation routes
+      description: |
+        Compares truck-only vs truck+ship transportation options based on
+        time, cost, and CO2 emissions, returning a weighted recommendation.
+      operationId: compareRoutes
+      tags:
+        - Comparison
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComparisonRequest'
+            examples:
+              tokyoToOsaka:
+                summary: Tokyo to Osaka with balanced weights
+                value:
+                  origin: Tokyo
+                  destination: Osaka
+                  weightKg: 500
+                  weights:
+                    time: 0.5
+                    cost: 0.3
+                    co2: 0.2
+              timeOptimized:
+                summary: Time-optimized route
+                value:
+                  origin: Tokyo
+                  destination: Osaka
+                  weightKg: 1000
+                  weights:
+                    time: 0.7
+                    cost: 0.2
+                    co2: 0.1
+              co2Optimized:
+                summary: CO2-optimized route
+                value:
+                  origin: Tokyo
+                  destination: Osaka
+                  weightKg: 500
+                  weights:
+                    time: 0.1
+                    cost: 0.2
+                    co2: 0.7
+      responses:
+        '200':
+          description: Successful comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComparisonResult'
+              examples:
+                truckRecommended:
+                  summary: Truck route recommended
+                  value:
+                    candidates:
+                      - plan: truck
+                        timeH: 7.2
+                        costJpy: 35000
+                        co2Kg: 25.1
+                      - plan: truck+ship
+                        timeH: 14.0
+                        costJpy: 21000
+                        co2Kg: 8.3
+                    recommendation: truck
+                    rationale:
+                      truck:
+                        distanceKm: 520
+                      truck+ship:
+                        legs:
+                          - from: Tokyo
+                            to: TokyoPort
+                            mode: truck
+                            distanceKm: 15
+                            timeHours: 0.5
+                          - from: TokyoPort
+                            to: OsakaPort
+                            mode: ship
+                            distanceKm: 410
+                            timeHours: 20.5
+                          - from: OsakaPort
+                            to: Osaka
+                            mode: truck
+                            distanceKm: 12
+                            timeHours: 0.4
+                    metadata:
+                      calculationTimeMs: 234
+                      dataVersion: "2025-09-12"
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidWeight:
+                  summary: Invalid cargo weight
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Cargo weight must be positive
+                      field: weightKg
+                    requestId: req_abc123
+                    timestamp: "2025-09-12T10:30:00Z"
+                sameOriginDestination:
+                  summary: Same origin and destination
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      message: Origin and destination must be different
+                    requestId: req_def456
+                    timestamp: "2025-09-12T10:31:00Z"
+        '404':
+          description: Route not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unknownLocation:
+                  summary: Unknown location
+                  value:
+                    error:
+                      code: ROUTE_NOT_FOUND
+                      message: Location 'InvalidCity' not found
+                      details:
+                        location: InvalidCity
+                    requestId: req_ghi789
+                    timestamp: "2025-09-12T10:32:00Z"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                serviceError:
+                  summary: AWS service error
+                  value:
+                    error:
+                      code: SERVICE_ERROR
+                      message: Failed to calculate route
+                    requestId: req_jkl012
+                    timestamp: "2025-09-12T10:33:00Z"
+
+components:
+  schemas:
+    ComparisonRequest:
+      type: object
+      required:
+        - origin
+        - destination
+        - weightKg
+        - weights
+      properties:
+        origin:
+          type: string
+          description: Starting location name
+          minLength: 1
+          maxLength: 100
+          example: Tokyo
+        destination:
+          type: string
+          description: Ending location name
+          minLength: 1
+          maxLength: 100
+          example: Osaka
+        weightKg:
+          type: number
+          description: Cargo weight in kilograms
+          minimum: 0.1
+          maximum: 100000
+          example: 500
+        weights:
+          $ref: '#/components/schemas/WeightFactors'
+
+    WeightFactors:
+      type: object
+      required:
+        - time
+        - cost
+        - co2
+      properties:
+        time:
+          type: number
+          description: Weight for time optimization (0.0-1.0)
+          minimum: 0
+          maximum: 1
+          example: 0.5
+        cost:
+          type: number
+          description: Weight for cost optimization (0.0-1.0)
+          minimum: 0
+          maximum: 1
+          example: 0.3
+        co2:
+          type: number
+          description: Weight for CO2 optimization (0.0-1.0)
+          minimum: 0
+          maximum: 1
+          example: 0.2
+
+    ComparisonResult:
+      type: object
+      required:
+        - candidates
+        - recommendation
+        - rationale
+      properties:
+        candidates:
+          type: array
+          description: All evaluated transport plans
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/TransportPlan'
+        recommendation:
+          type: string
+          description: Recommended plan type
+          enum:
+            - truck
+            - truck+ship
+          example: truck
+        rationale:
+          $ref: '#/components/schemas/RouteRationale'
+        metadata:
+          type: object
+          properties:
+            calculationTimeMs:
+              type: number
+              description: Processing time in milliseconds
+              example: 234
+            dataVersion:
+              type: string
+              description: Version of the CSV data used
+              example: "2025-09-12"
+
+    TransportPlan:
+      type: object
+      required:
+        - plan
+        - timeH
+        - costJpy
+        - co2Kg
+      properties:
+        plan:
+          type: string
+          description: Plan type identifier
+          enum:
+            - truck
+            - truck+ship
+          example: truck
+        timeH:
+          type: number
+          description: Total time in hours
+          minimum: 0
+          example: 7.2
+        costJpy:
+          type: number
+          description: Total cost in Japanese Yen
+          minimum: 0
+          example: 35000
+        co2Kg:
+          type: number
+          description: Total CO2 emissions in kilograms
+          minimum: 0
+          example: 25.1
+        legs:
+          type: array
+          description: Route segments (for multi-modal plans)
+          items:
+            $ref: '#/components/schemas/TransportLeg'
+
+    TransportLeg:
+      type: object
+      required:
+        - from
+        - to
+        - mode
+        - distanceKm
+        - timeHours
+      properties:
+        from:
+          type: string
+          description: Origin location name
+          example: Tokyo
+        to:
+          type: string
+          description: Destination location name
+          example: TokyoPort
+        mode:
+          type: string
+          description: Transportation mode
+          enum:
+            - truck
+            - ship
+          example: truck
+        distanceKm:
+          type: number
+          description: Distance in kilometers
+          minimum: 0
+          example: 15
+        timeHours:
+          type: number
+          description: Duration in hours
+          minimum: 0
+          example: 0.5
+
+    RouteRationale:
+      type: object
+      description: Detailed explanation of route calculations
+      properties:
+        truck:
+          type: object
+          properties:
+            distanceKm:
+              type: number
+              description: Direct truck distance in kilometers
+              example: 520
+        truck+ship:
+          type: object
+          properties:
+            legs:
+              type: array
+              description: Detailed route segments
+              items:
+                $ref: '#/components/schemas/TransportLeg'
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - requestId
+        - timestamp
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Error code
+              enum:
+                - VALIDATION_ERROR
+                - ROUTE_NOT_FOUND
+                - DATA_ERROR
+                - SERVICE_ERROR
+              example: VALIDATION_ERROR
+            message:
+              type: string
+              description: Human-readable error message
+              example: Cargo weight must be positive
+            field:
+              type: string
+              description: Field name for validation errors
+              example: weightKg
+            details:
+              type: object
+              description: Additional error context
+        requestId:
+          type: string
+          description: Unique request identifier for tracking
+          example: req_abc123
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp in ISO 8601 format
+          example: "2025-09-12T10:30:00Z"
+
+tags:
+  - name: Comparison
+    description: Route comparison operations
