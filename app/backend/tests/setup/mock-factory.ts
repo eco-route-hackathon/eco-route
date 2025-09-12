@@ -11,6 +11,7 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { TEST_CONFIG } from './test-config';
 import { ComparisonRequest, WeightFactors } from '../../src/lib/shared-types';
 import { Readable } from 'stream';
+import { createApp } from '../../src/app';
 
 export class MockFactory {
   /**
@@ -78,8 +79,8 @@ export class MockFactory {
       Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}links.csv`
     }).resolves({
       Body: Readable.from(
-        'from,to,mode,distance_km,time_hours\n' +
-        'TokyoPort,OsakaPort,ship,410,20.5'
+        'from_port_id,to_port_id,distance_km,time_hours,operator,frequency_per_week\n' +
+        '3,4,410,20.5,ShipCo,7'
       ) as any
     });
 
@@ -176,14 +177,8 @@ export class MockFactory {
    * Create Express app mock for supertest
    */
   static createAppMock() {
-    // This will be implemented when we have the actual Express app
-    // For now, return a placeholder
-    return {
-      post: vi.fn(),
-      get: vi.fn(),
-      use: vi.fn(),
-      listen: vi.fn()
-    };
+    // Use the actual Express app
+    return createApp();
   }
 
   /**
