@@ -1,0 +1,274 @@
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.recommended {
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #f8fff8 0%, #fff 100%);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+}
+
+.alternative {
+  border-color: #e1e8ed;
+}
+
+.primary {
+  transform: scale(1.02);
+}
+
+.secondary {
+  opacity: 0.9;
+}
+
+/* ヘッダー */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.planInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.planIcon {
+  font-size: 1.5rem;
+}
+
+.planTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #4CAF50;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.badgeIcon {
+  font-size: 0.9rem;
+}
+
+.badgeText {
+  font-weight: 600;
+}
+
+/* メトリクス */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric {
+  text-align: center;
+  padding: 1rem;
+  background: #f8f9fb;
+  border-radius: 8px;
+  border: 1px solid #e8f0fe;
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.metricIcon {
+  font-size: 1rem;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #7f8c8d;
+}
+
+.metricValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.difference {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.better {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
+
+.worse {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+/* ルート詳細 */
+.routeDetails {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fb;
+  border-radius: 8px;
+  border-left: 3px solid #4CAF50;
+}
+
+.routeTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+}
+
+.legsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e8f0fe;
+}
+
+.legIcon {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.legInfo {
+  flex: 1;
+}
+
+.legRoute {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.legStats {
+  display: flex;
+  gap: 1rem;
+}
+
+.legDistance,
+.legTime {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+}
+
+/* 推奨理由 */
+.recommendation {
+  padding: 1rem;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+  border-radius: 8px;
+  border: 1px solid #c8e6c9;
+}
+
+.recommendationHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.recommendationIcon {
+  font-size: 1rem;
+}
+
+.recommendationLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.recommendationText {
+  font-size: 0.9rem;
+  color: #388e3c;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .metric {
+    padding: 0.75rem;
+  }
+
+  .legItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .legStats {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .primary {
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .planInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .badge {
+    align-self: flex-start;
+  }
+}
