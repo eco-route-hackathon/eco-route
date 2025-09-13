@@ -12,6 +12,7 @@ process.env.AWS_REGION = TEST_CONFIG.aws.region;
 process.env.ROUTE_CALCULATOR_NAME = TEST_CONFIG.aws.resources.routeCalculatorName;
 process.env.S3_BUCKET = TEST_CONFIG.aws.resources.s3BucketName;
 process.env.PORT = String(TEST_CONFIG.environment.port);
+process.env.LOCAL_DATA_PATH = './data'; // Use local CSV files for testing
 
 // Global test lifecycle hooks
 beforeAll(() => {

@@ -70,7 +70,18 @@ export class MockFactory {
         '1,Tokyo,35.6762,139.6503,city\n' +
         '2,Osaka,34.6937,135.5023,city\n' +
         '3,TokyoPort,35.6551,139.7595,port\n' +
-        '4,OsakaPort,34.6500,135.4300,port'
+        '4,OsakaPort,34.6500,135.4300,port\n' +
+        '5,Nagoya,35.1815,136.9066,city\n' +
+        '6,NagoyaPort,35.0833,136.8833,port\n' +
+        '7,Yokohama,35.4437,139.6380,city\n' +
+        '8,YokohamaPort,35.4400,139.6500,port\n' +
+        '9,Kyoto,35.0116,135.7681,city\n' +
+        '10,Kobe,34.6901,135.1956,city\n' +
+        '11,KobePort,34.6833,135.2000,port\n' +
+        '12,Fukuoka,33.5904,130.4017,city\n' +
+        '13,HakataPort,33.5833,130.4167,port\n' +
+        '14,Sapporo,43.0642,141.3469,city\n' +
+        '15,Okinawa,26.2124,127.6792,city'
       ) as any
     });
 
@@ -80,7 +91,16 @@ export class MockFactory {
     }).resolves({
       Body: Readable.from(
         'from_port_id,to_port_id,distance_km,time_hours,operator,frequency_per_week\n' +
-        '3,4,410,20.5,ShipCo,7'
+        '3,4,410,20.5,ShipCo,7\n' +
+        '3,6,280,14.0,ShipCo,7\n' +
+        '6,4,130,6.5,ShipCo,5\n' +
+        '8,11,420,21.0,MarineLine,7\n' +
+        '3,13,890,44.5,OceanExpress,3\n' +
+        '4,13,480,24.0,ShipCo,5\n' +
+        '11,13,450,22.5,MarineLine,5\n' +
+        '3,8,30,1.5,LocalFerry,14\n' +
+        '4,11,35,1.8,LocalFerry,14\n' +
+        '6,13,550,27.5,OceanExpress,3'
       ) as any
     });
 

@@ -22,6 +22,7 @@ import { ShipLink } from '../services/CsvDataLoader';
 const csvLoader = new CsvDataLoader({
   bucketName: process.env.S3_BUCKET || 'eco-route-data',
   region: process.env.AWS_REGION || 'ap-northeast-1',
+  localDataPath: process.env.LOCAL_DATA_PATH
 });
 
 const routeCalculator = new RouteCalculator({

@@ -55,7 +55,7 @@ export class CsvDataLoader {
   constructor(config: CsvLoaderConfig) {
     this.bucketName = config.bucketName;
     this.cacheEnabled = config.cacheEnabled ?? true;
-    this.localDataPath = config.localDataPath;
+    this.localDataPath = config.localDataPath || process.env.LOCAL_DATA_PATH;
     this.s3Client = new S3Client({ region: config.region });
   }
 
