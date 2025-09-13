@@ -30,6 +30,29 @@ interface ComparisonDetail {
 interface ComparisonMetadata {
   truckDistance?: number;
   calculationTimeMs?: number;
+  cargoWeightKg?: number;
+  routeComplexity?: 'simple' | 'moderate' | 'complex';
+  performanceMetrics?: {
+    co2ReductionPercent?: number;
+    timeDifferencePercent?: number;
+    costDifferencePercent?: number;
+    recommendationConfidence?: number;
+  };
+}
+
+interface SensitivityAnalysis {
+  timeThreshold: number | null;
+  costThreshold: number | null;
+  co2Threshold: number | null;
+}
+
+interface DominantFactors {
+  [planType: string]: string[];
+}
+
+interface BatchComparisonResult {
+  recommendation: PlanType;
+  scores: Record<string, number>;
 }
 
 export class ScoreOptimizer {
@@ -566,12 +589,100 @@ export class ScoreOptimizer {
     return results;
   }
 
+
+
   /**
-   * Identify dominant factors in decision
+   * Analyze sensitivity of recommendations to weight changes
+   * Returns weight thresholds where recommendation changes
    */
-  identifyDominantFactors(plans: TransportPlan[], weights: WeightFactors): any {
-    const factors: any = {};
-    const breakdown = this.getScoreBreakdown(plans, weights);
+  analyzeSensitivity(plans: TransportPlan[]): SensitivityAnalysis {
+    if (plans.length < 2) {
+      return {
+        timeThreshold: null,
+        costThreshold: null,
+        co2Threshold: null
+      };
+    }
+
+    const thresholds: SensitivityAnalysis = {
+      timeThreshold: null,
+      costThreshold: null,
+      co2Threshold: null
+    };
+
+    // Binary search for time threshold
+    thresholds.timeThreshold = this.findWeightThreshold(
+      plans,
+      (weights, newTimeWeight) => ({ ...weights, time: newTimeWeight }),
+      'time'
+    );
+
+    // Binary search for cost threshold
+    thresholds.costThreshold = this.findWeightThreshold(
+      plans,
+      (weights, newCostWeight) => ({ ...weights, cost: newCostWeight }),
+      'cost'
+    );
+
+    // Binary search for CO2 threshold
+    thresholds.co2Threshold = this.findWeightThreshold(
+      plans,
+      (weights, newCo2Weight) => ({ ...weights, co2: newCo2Weight }),
+      'co2'
+    );
+
+    return thresholds;
+  }
+
+  /**
+   * Find weight threshold where recommendation changes using binary search
+   */
+  private findWeightThreshold(
+    plans: TransportPlan[],
+    weightUpdater: (weights: WeightFactors, newWeight: number) => WeightFactors,
+    factor: 'time' | 'cost' | 'co2'
+  ): number | null {
+    const baseWeights: WeightFactors = { time: 0.33, cost: 0.33, co2: 0.34 };
+    const baseResult = this.comparePlans(plans, baseWeights);
+    
+    let low = 0;
+    let high = 1;
+    let threshold: number | null = null;
+    
+    // Binary search with precision
+    for (let i = 0; i < 20; i++) {
+      const mid = (low + high) / 2;
+      
+      // Create weights with the factor set to mid, others balanced
+      const testWeights = weightUpdater(baseWeights, mid);
+      const normalizedWeights = this.normalizeWeights(testWeights);
+      
+      const testResult = this.comparePlans(plans, normalizedWeights);
+      
+      if (testResult.recommendation === baseResult.recommendation) {
+        low = mid;
+      } else {
+        high = mid;
+        threshold = mid;
+      }
+      
+      if (high - low < 0.001) break;
+    }
+    
+    return threshold;
+  }
+
+  /**
+   * Identify dominant factors for each plan
+   * Fixed version that properly handles weights parameter
+   */
+  identifyDominantFactors(plans: TransportPlan[], weights?: WeightFactors): DominantFactors {
+    // Use default weights if not provided
+    const defaultWeights: WeightFactors = { time: 0.33, cost: 0.33, co2: 0.34 };
+    const analysisWeights = weights || defaultWeights;
+    
+    const factors: DominantFactors = {};
+    const breakdown = this.getScoreBreakdown(plans, analysisWeights);
     
     for (const planKey of Object.keys(breakdown)) {
       const components = breakdown[planKey];
@@ -600,21 +711,17 @@ export class ScoreOptimizer {
   }
 
   /**
-   * Batch compare multiple plan sets efficiently
+   * Batch compare with simplified interface for test compatibility
    */
-  async batchCompare(
-    planSets: Array<{ plans: TransportPlan[]; weights: WeightFactors }>
-  ): Promise<ComparisonDetail[]> {
-    const results: ComparisonDetail[] = [];
+  async batchCompare(plans: TransportPlan[], weightSets: WeightFactors[]): Promise<BatchComparisonResult[]> {
+    const results: BatchComparisonResult[] = [];
     
-    // Process in batches for efficiency
-    const batchSize = 10;
-    for (let i = 0; i < planSets.length; i += batchSize) {
-      const batch = planSets.slice(i, i + batchSize);
-      const batchResults = await Promise.all(
-        batch.map(set => Promise.resolve(this.comparePlans(set.plans, set.weights)))
-      );
-      results.push(...batchResults);
+    for (const weights of weightSets) {
+      const comparison = this.comparePlans(plans, weights);
+      results.push({
+        recommendation: comparison.recommendation,
+        scores: comparison.scores
+      });
     }
     
     return results;
