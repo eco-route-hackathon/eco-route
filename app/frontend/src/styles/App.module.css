@@ -119,6 +119,13 @@
   margin: 0;
 }
 
+.apiInfo {
+  color: #95a5a6;
+  font-size: 0.75rem;
+  margin: 0.25rem 0 0 0;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 1024px) {
   .main {

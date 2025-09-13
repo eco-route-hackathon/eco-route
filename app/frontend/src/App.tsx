@@ -15,6 +15,7 @@ function App() {
     error,
     clearError,
     clearResult,
+    currentApiUrl,
   } = useComparisonAPI();
 
   // フォーム状態の更新ハンドラー
@@ -111,6 +112,9 @@ function App() {
       <footer className={styles.footer}>
         <p className={styles.footerText}>
           © 2025 Eco Route MVP - 持続可能な輸送の選択を支援
+        </p>
+        <p className={styles.apiInfo}>
+          API接続先: {currentApiUrl}
         </p>
       </footer>
     </div>
