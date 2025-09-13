@@ -40,13 +40,19 @@ export function validateComparisonRequest(body: any): ValidationError | null {
     return { field: 'destination', message: 'destination must be a non-empty string' };
   }
 
-  // Check string length limits
+  // Check string length limits with detailed error messages
   if (body.origin.length > 100) {
-    return { field: 'origin', message: 'origin must not exceed 100 characters' };
+    return { 
+      field: 'origin', 
+      message: `Origin location name must not exceed 100 characters (current: ${body.origin.length} characters)` 
+    };
   }
 
   if (body.destination.length > 100) {
-    return { field: 'destination', message: 'destination must not exceed 100 characters' };
+    return { 
+      field: 'destination', 
+      message: `Destination location name must not exceed 100 characters (current: ${body.destination.length} characters)` 
+    };
   }
 
   // Check that origin and destination are different
@@ -61,15 +67,24 @@ export function validateComparisonRequest(body: any): ValidationError | null {
   }
 
   if (weight <= 0) {
-    return { field: 'weightKg', message: 'weightKg must be positive' };
+    return { 
+      field: 'weightKg', 
+      message: `Cargo weight must be positive (received: ${body.weightKg}kg)` 
+    };
   }
 
   if (weight < 0.1) {
-    return { field: 'weightKg', message: 'weightKg must be at least 0.1' };
+    return { 
+      field: 'weightKg', 
+      message: `Cargo weight must be at least 0.1kg (received: ${body.weightKg}kg)` 
+    };
   }
 
   if (weight > 100000) {
-    return { field: 'weightKg', message: 'weightKg must not exceed 100000' };
+    return { 
+      field: 'weightKg', 
+      message: `Cargo weight must not exceed 100,000kg (received: ${body.weightKg}kg)` 
+    };
   }
 
   // Validate weights object

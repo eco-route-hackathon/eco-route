@@ -5,7 +5,6 @@
 
 import express, { Express } from 'express';
 import cors from 'cors';
-// ...existing code...
 import { compareHandler } from './api/compare-handler';
 import { errorHandler } from './middleware/error-handler';
 
@@ -16,14 +15,19 @@ export function createApp(): Express {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  const corsOptions = {
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    credentials: true,
+    optionsSuccessStatus: 200
+  };
+  app.use(cors(corsOptions));
   app.use(express.json());
 
   // Health check endpoint
   app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
   });
 
