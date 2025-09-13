@@ -1,11 +1,84 @@
-# React + TypeScript + Vite
+# Eco Route Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Viteを使用したエコルートMVPのフロントエンドアプリケーション。
 
-Currently, two official plugins are available:
+## 🚀 開発環境のセットアップ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 依存関係のインストール
+```bash
+npm install
+```
+
+### 開発サーバーの起動
+```bash
+npm run dev
+```
+
+### 本番ビルド
+```bash
+npm run build
+npm run preview
+```
+
+## 🔧 環境変数設定
+
+### API接続先の設定
+
+アプリケーションは環境に応じて自動的にAPIエンドポイントを切り替えます。
+
+**開発環境（npm run dev）**:
+- ファイル: `.env.development`
+- API URL: `http://localhost:3000`
+
+**本番環境（npm run build）**:
+- ファイル: `.env.production`
+- API URL: `https://im6bg2tvct.us-east-1.awsapprunner.com`
+
+**ローカル開発（個人設定）**:
+- ファイル: `.env.local`（最優先）
+- 例: `.env.local.example`をコピーして使用
+
+### 環境変数の設定例
+
+```bash
+# .env.local
+VITE_API_URL=http://localhost:3000
+VITE_DEV_MODE=true
+VITE_LOG_LEVEL=debug
+```
+
+### API接続テスト
+
+本番APIをローカルでテストする場合:
+```bash
+VITE_API_URL=https://im6bg2tvct.us-east-1.awsapprunner.com npm run dev
+```
+
+## 📁 プロジェクト構造
+
+```
+src/
+├── components/          # Reactコンポーネント
+│   ├── ComparisonForm.tsx
+│   ├── ResultsDisplay.tsx
+│   └── ComparisonChart.tsx
+├── hooks/              # カスタムフック
+│   └── useComparisonAPI.ts
+├── styles/             # CSSモジュール
+│   ├── App.module.css
+│   └── components/
+├── types.ts            # TypeScript型定義
+├── utils/              # ユーティリティ関数
+└── App.tsx             # メインアプリケーション
+```
+
+## 🎯 主な機能
+
+- 🌱 輸送ルート比較フォーム
+- 📊 結果表示（時間・コスト・CO2排出量）
+- 📈 インタラクティブなグラフ表示
+- 🔄 環境自動切り替え
+- 📱 レスポンシブデザイン
 
 ## Expanding the ESLint configuration
 

@@ -9,6 +9,7 @@ interface UseComparisonAPIResult {
   error: string | null;
   clearError: () => void;
   clearResult: () => void;
+  currentApiUrl: string;
 }
 
 export const useComparisonAPI = (): UseComparisonAPIResult => {
@@ -25,14 +26,18 @@ export const useComparisonAPI = (): UseComparisonAPIResult => {
     return 'http://localhost:3000';
   };
 
+  const currentApiUrl = getAPIUrl();
+
   const callCompareAPI = async (request: ComparisonRequest): Promise<void> => {
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
+      console.log(`API呼び出し: ${currentApiUrl}/compare`);
+
       const response = await axios.post<ComparisonResult>(
-        `${getAPIUrl()}/compare`,
+        `${currentApiUrl}/compare`,
         request,
         {
           headers: {
@@ -98,5 +103,6 @@ export const useComparisonAPI = (): UseComparisonAPIResult => {
     error,
     clearError,
     clearResult,
+    currentApiUrl,
   };
 };
