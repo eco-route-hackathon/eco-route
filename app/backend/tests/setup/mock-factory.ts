@@ -70,7 +70,18 @@ export class MockFactory {
         '1,Tokyo,35.6762,139.6503,city\n' +
         '2,Osaka,34.6937,135.5023,city\n' +
         '3,TokyoPort,35.6551,139.7595,port\n' +
-        '4,OsakaPort,34.6500,135.4300,port'
+        '4,OsakaPort,34.6500,135.4300,port\n' +
+        '5,Nagoya,35.1815,136.9066,city\n' +
+        '6,NagoyaPort,35.0833,136.8833,port\n' +
+        '7,Yokohama,35.4437,139.6380,city\n' +
+        '8,YokohamaPort,35.4400,139.6500,port\n' +
+        '9,Kyoto,35.0116,135.7681,city\n' +
+        '10,Kobe,34.6901,135.1956,city\n' +
+        '11,KobePort,34.6833,135.2000,port\n' +
+        '12,Fukuoka,33.5904,130.4017,city\n' +
+        '13,HakataPort,33.5833,130.4167,port\n' +
+        '14,Sapporo,43.0642,141.3469,city\n' +
+        '15,Okinawa,26.2124,127.6792,city'
       ) as any
     });
 
@@ -80,8 +91,109 @@ export class MockFactory {
     }).resolves({
       Body: Readable.from(
         'from_port_id,to_port_id,distance_km,time_hours,operator,frequency_per_week\n' +
-        '3,4,410,20.5,ShipCo,7'
+        '3,4,410,20.5,ShipCo,7\n' +
+        '3,6,280,14.0,ShipCo,7\n' +
+        '6,4,130,6.5,ShipCo,5\n' +
+        '8,11,420,21.0,MarineLine,7\n' +
+        '3,13,890,44.5,OceanExpress,3\n' +
+        '4,13,480,24.0,ShipCo,5\n' +
+        '11,13,450,22.5,MarineLine,5\n' +
+        '3,8,30,1.5,LocalFerry,14\n' +
+        '4,11,35,1.8,LocalFerry,14\n' +
+        '6,13,550,27.5,OceanExpress,3'
       ) as any
+    });
+
+    return s3Mock;
+  }
+
+  /**
+   * Create AWS Location Service error mock
+   * Simulates AWS service failures
+   */
+  static createLocationErrorMock() {
+    const locationMock = mockClient(LocationClient);
+    
+    // Simulate AWS Location Service failure
+    locationMock.on(CalculateRouteCommand).rejects({
+      name: 'ResourceNotFoundException',
+      message: 'Route calculator not found',
+      $metadata: {
+        httpStatusCode: 404,
+        requestId: 'test-request-id'
+      }
+    });
+
+    return locationMock;
+  }
+
+  /**
+   * Create S3 access error mock
+   * Simulates S3 bucket access failures
+   */
+  static createS3ErrorMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Simulate S3 access denied error
+    s3Mock.on(GetObjectCommand).rejects({
+      name: 'AccessDenied',
+      message: 'Access Denied',
+      $metadata: {
+        httpStatusCode: 403,
+        requestId: 'test-s3-request-id'
+      }
+    });
+
+    return s3Mock;
+  }
+
+  /**
+   * Create S3 no such bucket error mock
+   * Simulates missing S3 bucket
+   */
+  static createS3NoBucketMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Simulate S3 bucket not found error
+    s3Mock.on(GetObjectCommand).rejects({
+      name: 'NoSuchBucket',
+      message: 'The specified bucket does not exist',
+      $metadata: {
+        httpStatusCode: 404,
+        requestId: 'test-s3-bucket-request-id'
+      }
+    });
+
+    return s3Mock;
+  }
+
+  /**
+   * Create corrupted CSV data mock
+   * Simulates invalid CSV format
+   */
+  static createCorruptedCsvMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Mock corrupted CSV data
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}modes.csv`
+    }).resolves({
+      Body: Readable.from('invalid,csv,format,with,missing,columns') as any
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}locations.csv`
+    }).resolves({
+      Body: Readable.from('corrupted,data\nmissing,values') as any
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}links.csv`
+    }).resolves({
+      Body: Readable.from('invalid,link,data') as any
     });
 
     return s3Mock;
