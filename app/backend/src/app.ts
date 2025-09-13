@@ -5,7 +5,7 @@
 
 import express, { Express } from 'express';
 import cors from 'cors';
-import { ComparisonRequest, ComparisonResult } from './lib/shared-types';
+// ...existing code...
 import { compareHandler } from './api/compare-handler';
 import { errorHandler } from './middleware/error-handler';
 
@@ -20,10 +20,10 @@ export function createApp(): Express {
   app.use(express.json());
 
   // Health check endpoint
-  app.get('/health', (req, res) => {
-    res.json({ 
+  app.get('/health', (_req, res) => {
+    res.json({
       status: 'healthy',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   });
 

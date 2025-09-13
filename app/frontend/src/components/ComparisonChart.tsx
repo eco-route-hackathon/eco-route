@@ -1,21 +1,16 @@
 import React from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
-  Cell
+  Cell,
 } from 'recharts';
 import type { TransportPlan, PlanType } from '../types';
-import { 
-  formatTime, 
-  formatCurrency, 
-  formatCO2,
-  getPlanLabel 
-} from '../utils/formatters';
+import { formatTime, formatCurrency, formatCO2, getPlanLabel } from '../utils/formatters';
 import styles from '../styles/components/ComparisonChart.module.css';
 
 interface ComparisonChartProps {
@@ -23,18 +18,15 @@ interface ComparisonChartProps {
   recommendation: PlanType;
 }
 
-const ComparisonChart: React.FC<ComparisonChartProps> = ({
-  candidates,
-  recommendation
-}) => {
+const ComparisonChart: React.FC<ComparisonChartProps> = ({ candidates, recommendation }) => {
   // グラフ用データの準備
-  const chartData = candidates.map(plan => ({
+  const chartData = candidates.map((plan) => ({
     name: getPlanLabel(plan.plan),
     plan: plan.plan,
     時間: plan.timeH,
     コスト: plan.costJpy,
     CO2: plan.co2Kg,
-    isRecommended: plan.plan === recommendation
+    isRecommended: plan.plan === recommendation,
   }));
 
   // カスタムTooltip
@@ -46,7 +38,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
         コスト: number;
         CO2: number;
         isRecommended: boolean;
-      }
+      };
     }>;
     label?: string;
   }
@@ -58,9 +50,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
         <div className={styles.tooltip}>
           <div className={styles.tooltipHeader}>
             <span className={styles.tooltipTitle}>{label}</span>
-            {data.isRecommended && (
-              <span className={styles.tooltipBadge}>⭐ おすすめ</span>
-            )}
+            {data.isRecommended && <span className={styles.tooltipBadge}>⭐ おすすめ</span>}
           </div>
           <div className={styles.tooltipContent}>
             <div className={styles.tooltipItem}>
@@ -110,13 +100,9 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 12 }}
-                interval={0}
-              />
-              <YAxis 
-                tickFormatter={(value) => formatYAxis(value, '時間')}
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
+              <YAxis
+                tickFormatter={(value: number) => formatYAxis(value, '時間')}
                 tick={{ fontSize: 12 }}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -137,13 +123,9 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 12 }}
-                interval={0}
-              />
-              <YAxis 
-                tickFormatter={(value) => formatYAxis(value, 'コスト')}
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
+              <YAxis
+                tickFormatter={(value: number) => formatYAxis(value, 'コスト')}
                 tick={{ fontSize: 12 }}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -164,13 +146,9 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="name" 
-                tick={{ fontSize: 12 }}
-                interval={0}
-              />
-              <YAxis 
-                tickFormatter={(value) => formatYAxis(value, 'CO2')}
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
+              <YAxis
+                tickFormatter={(value: number) => formatYAxis(value, 'CO2')}
                 tick={{ fontSize: 12 }}
               />
               <Tooltip content={<CustomTooltip />} />

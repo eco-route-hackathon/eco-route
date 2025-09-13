@@ -6,12 +6,7 @@
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { parse } from 'csv-parse';
-import { 
-  Location, 
-  LocationType, 
-  ModeType, 
-  TransportMode 
-} from '../lib/shared-types';
+import { Location, LocationType, ModeType, TransportMode } from '../lib/shared-types';
 
 // ShipLink interface for CSV data
 export interface ShipLink {
@@ -46,7 +41,6 @@ export class CsvDataLoader {
   private bucketName: string;
   private cache: Map<string, any> = new Map();
   private cacheEnabled: boolean;
-  private cacheExpiration: number = 3600000; // 1 hour default
 
   constructor(config: CsvLoaderConfig) {
     this.bucketName = config.bucketName;
@@ -58,22 +52,15 @@ export class CsvDataLoader {
     this.cache.clear();
   }
 
-  setCacheExpiration(ms: number): void {
-    this.cacheExpiration = ms;
-    if (ms === 0) {
-      this.clearCache();
-    }
-  }
-
   async loadLocations(options: LoadOptions = {}): Promise<Location[]> {
     const cacheKey = 'locations';
-    
+
     if (this.cacheEnabled && this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
 
     const data = await this.fetchAndParseCsv('locations.csv', options);
-    
+
     // Check for required columns in the first row (only in strict mode or default)
     if (options.strict !== false && data.length > 0) {
       const firstRow = data[0];
@@ -84,7 +71,7 @@ export class CsvDataLoader {
         throw new Error('Missing required column: lon');
       }
     }
-    
+
     const locations: Location[] = [];
 
     for (const row of data) {
@@ -119,7 +106,7 @@ export class CsvDataLoader {
         name: row.name,
         lat,
         lon,
-        type: this.normalizeLocationType(row.type || 'city')
+        type: this.normalizeLocationType(row.type || 'city'),
       });
     }
 
@@ -132,7 +119,7 @@ export class CsvDataLoader {
 
   async loadTransportModes(options: LoadOptions = {}): Promise<TransportMode[]> {
     const cacheKey = 'transport_modes';
-    
+
     if (this.cacheEnabled && this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
@@ -148,7 +135,10 @@ export class CsvDataLoader {
       const avgSpeedKmph = parseFloat(row[mapping.avgSpeedKmph || 'avg_speed_kmph']);
 
       // Skip invalid rows if requested
-      if (options.skipInvalid && (isNaN(costPerKm) || isNaN(co2KgPerTonKm) || isNaN(avgSpeedKmph))) {
+      if (
+        options.skipInvalid &&
+        (isNaN(costPerKm) || isNaN(co2KgPerTonKm) || isNaN(avgSpeedKmph))
+      ) {
         continue;
       }
 
@@ -156,7 +146,7 @@ export class CsvDataLoader {
         mode: this.normalizeModeType(mode),
         costPerKm,
         co2KgPerTonKm,
-        avgSpeedKmph
+        avgSpeedKmph,
       });
     }
 
@@ -169,7 +159,7 @@ export class CsvDataLoader {
 
   async loadShipLinks(options: LoadOptions = {}): Promise<ShipLink[]> {
     const cacheKey = 'ship_links';
-    
+
     if (this.cacheEnabled && this.cache.has(cacheKey)) {
       return this.cache.get(cacheKey);
     }
@@ -179,7 +169,7 @@ export class CsvDataLoader {
 
     for (const row of data) {
       const frequencyPerWeek = parseInt(row.frequency_per_week);
-      
+
       // Filter by minimum frequency
       if (options.minFrequency && frequencyPerWeek < options.minFrequency) {
         continue;
@@ -187,7 +177,7 @@ export class CsvDataLoader {
 
       // Validate port references if provided
       if (options.validatePorts) {
-        const validPorts = options.validatePorts.map(p => p.id);
+        const validPorts = options.validatePorts.map((p) => p.id);
         if (!validPorts.includes(row.from_port_id) || !validPorts.includes(row.to_port_id)) {
           continue;
         }
@@ -199,7 +189,7 @@ export class CsvDataLoader {
         distanceKm: parseFloat(row.distance_km),
         timeHours: parseFloat(row.time_hours),
         operator: row.operator,
-        frequencyPerWeek
+        frequencyPerWeek,
       };
 
       links.push(link);
@@ -212,7 +202,7 @@ export class CsvDataLoader {
           distanceKm: link.distanceKm,
           timeHours: link.timeHours,
           operator: link.operator,
-          frequencyPerWeek: link.frequencyPerWeek
+          frequencyPerWeek: link.frequencyPerWeek,
         });
       }
     }
@@ -227,12 +217,12 @@ export class CsvDataLoader {
   private async fetchAndParseCsv(key: string, options: LoadOptions): Promise<any[]> {
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
-      Key: `latest/${key}`
+      Key: `latest/${key}`,
     });
 
     try {
       const response = await this.s3Client.send(command);
-      
+
       if (!response.Body) {
         return [];
       }
@@ -254,10 +244,10 @@ export class CsvDataLoader {
               return value.trim();
             }
             return value;
-          }
+          },
         });
 
-        parser.on('readable', function() {
+        parser.on('readable', function () {
           let record;
           while ((record = parser.read()) !== null) {
             records.push(record);
@@ -272,7 +262,7 @@ export class CsvDataLoader {
           }
           reject(err);
         });
-        
+
         parser.on('end', () => resolve(records));
 
         stream.pipe(parser);

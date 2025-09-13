@@ -67,12 +67,7 @@ function getErrorCode(error: any): ErrorCode {
 /**
  * Error handler middleware
  */
-export function errorHandler(
-  error: any,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void {
+export function errorHandler(error: any, _req: Request, res: Response, _next: NextFunction): void {
   // Generate request ID for tracking
   const requestId = generateRequestId();
 
@@ -89,10 +84,10 @@ export function errorHandler(
       code: errorCode,
       message: error.message || 'An unexpected error occurred',
       field: error.field,
-      details: error.details
+      details: error.details,
     },
     requestId,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // Special handling for JSON parsing errors
@@ -129,10 +124,10 @@ export function notFoundHandler(req: Request, res: Response): void {
   const errorResponse: ErrorResponse = {
     error: {
       code: ErrorCode.ROUTE_NOT_FOUND,
-      message: `Endpoint not found: ${req.method} ${req.path}`
+      message: `Endpoint not found: ${req.method} ${req.path}`,
     },
     requestId: generateRequestId(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   res.status(404).json(errorResponse);
