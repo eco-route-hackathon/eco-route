@@ -5,27 +5,34 @@
 
 // ============= Enums =============
 
-export enum LocationType {
-  CITY = 'city',
-  PORT = 'port',
-}
+export const LocationType = {
+  CITY: 'city',
+  PORT: 'port',
+} as const;
 
-export enum ModeType {
-  TRUCK = 'truck',
-  SHIP = 'ship',
-}
+export const ModeType = {
+  TRUCK: 'truck',
+  SHIP: 'ship',
+} as const;
 
-export enum PlanType {
-  TRUCK = 'truck',
-  TRUCK_SHIP = 'truck+ship',
-}
+export const PlanType = {
+  TRUCK: 'truck',
+  TRUCK_SHIP: 'truck+ship',
+} as const;
 
-export enum ErrorCode {
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  ROUTE_NOT_FOUND = 'ROUTE_NOT_FOUND',
-  DATA_ERROR = 'DATA_ERROR',
-  SERVICE_ERROR = 'SERVICE_ERROR',
-}
+export const ErrorCode = {
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND',
+  DATA_ERROR: 'DATA_ERROR',
+  SERVICE_ERROR: 'SERVICE_ERROR',
+} as const;
+
+// ============= Type Definitions =============
+
+export type LocationType = typeof LocationType[keyof typeof LocationType];
+export type ModeType = typeof ModeType[keyof typeof ModeType];
+export type PlanType = typeof PlanType[keyof typeof PlanType];
+export type ErrorCode = typeof ErrorCode[keyof typeof ErrorCode];
 
 // ============= Core Entities =============
 
