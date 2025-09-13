@@ -1,14 +1,14 @@
 import React from 'react';
 import type { TransportPlan } from '../types';
-import { 
-  formatTime, 
-  formatCurrency, 
+import {
+  formatTime,
+  formatCurrency,
   formatCO2,
   formatTimeDifference,
   formatCostDifference,
   formatCO2Difference,
   getPlanLabel,
-  getPlanIcon
+  getPlanIcon,
 } from '../utils/formatters';
 import styles from '../styles/components/PlanCard.module.css';
 
@@ -23,12 +23,12 @@ export const PlanCard: React.FC<PlanCardProps> = ({
   plan,
   isRecommended,
   comparisonBase,
-  priority = 'secondary'
+  priority = 'secondary',
 }) => {
   const cardClass = [
     styles.card,
     isRecommended ? styles.recommended : styles.alternative,
-    priority === 'primary' ? styles.primary : styles.secondary
+    priority === 'primary' ? styles.primary : styles.secondary,
   ].join(' ');
 
   // 差分表示の計算
@@ -40,11 +40,17 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     return {
       time: formatTimeDifference(plan.timeH, comparisonBase.timeH),
       cost: formatCostDifference(plan.costJpy, comparisonBase.costJpy),
-      co2: formatCO2Difference(plan.co2Kg, comparisonBase.co2Kg)
+      co2: formatCO2Difference(plan.co2Kg, comparisonBase.co2Kg),
     };
   };
 
   const differences = getDifferences();
+
+  // デートシミュレーション遷移用
+  const handleDateSimulate = () => {
+    // ルート情報をクエリやstateで/dateに渡す（仮実装: location.href）
+    window.location.href = `/date?plan=${encodeURIComponent(JSON.stringify(plan))}`;
+  };
 
   return (
     <div className={cardClass}>
@@ -54,7 +60,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           <span className={styles.planIcon}>{getPlanIcon(plan.plan)}</span>
           <h4 className={styles.planTitle}>{getPlanLabel(plan.plan)}</h4>
         </div>
-        
+
         {isRecommended && (
           <div className={styles.badge}>
             <span className={styles.badgeIcon}>⭐</span>
@@ -73,9 +79,11 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           </div>
           <div className={styles.metricValue}>{formatTime(plan.timeH)}</div>
           {differences && (
-            <div className={`${styles.difference} ${
-              plan.timeH < comparisonBase!.timeH ? styles.better : styles.worse
-            }`}>
+            <div
+              className={`${styles.difference} ${
+                plan.timeH < comparisonBase!.timeH ? styles.better : styles.worse
+              }`}
+            >
               {differences.time}
             </div>
           )}
@@ -89,9 +97,11 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           </div>
           <div className={styles.metricValue}>{formatCurrency(plan.costJpy)}</div>
           {differences && (
-            <div className={`${styles.difference} ${
-              plan.costJpy < comparisonBase!.costJpy ? styles.better : styles.worse
-            }`}>
+            <div
+              className={`${styles.difference} ${
+                plan.costJpy < comparisonBase!.costJpy ? styles.better : styles.worse
+              }`}
+            >
               {differences.cost}
             </div>
           )}
@@ -105,9 +115,11 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           </div>
           <div className={styles.metricValue}>{formatCO2(plan.co2Kg)}</div>
           {differences && (
-            <div className={`${styles.difference} ${
-              plan.co2Kg < comparisonBase!.co2Kg ? styles.better : styles.worse
-            }`}>
+            <div
+              className={`${styles.difference} ${
+                plan.co2Kg < comparisonBase!.co2Kg ? styles.better : styles.worse
+              }`}
+            >
               {differences.co2}
             </div>
           )}
@@ -121,20 +133,14 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           <div className={styles.legsList}>
             {plan.legs.map((leg, index) => (
               <div key={index} className={styles.legItem}>
-                <span className={styles.legIcon}>
-                  {leg.mode === 'truck' ? '🚚' : '🚢'}
-                </span>
+                <span className={styles.legIcon}>{leg.mode === 'truck' ? '🚚' : '🚢'}</span>
                 <div className={styles.legInfo}>
                   <div className={styles.legRoute}>
                     {leg.from} → {leg.to}
                   </div>
                   <div className={styles.legStats}>
-                    <span className={styles.legDistance}>
-                      {leg.distanceKm.toLocaleString()}km
-                    </span>
-                    <span className={styles.legTime}>
-                      {formatTime(leg.timeHours)}
-                    </span>
+                    <span className={styles.legDistance}>{leg.distanceKm.toLocaleString()}km</span>
+                    <span className={styles.legTime}>{formatTime(leg.timeHours)}</span>
                   </div>
                 </div>
               </div>
@@ -155,6 +161,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           </p>
         </div>
       )}
+
+      {/* デートシミュレーションボタン（標準装備） */}
+      <div className={styles.dateSimButtonArea}>
+        <button className={styles.dateSimButton} onClick={handleDateSimulate}>
+          このルートでデートする（荷物＝女の子）
+        </button>
+      </div>
     </div>
   );
 };

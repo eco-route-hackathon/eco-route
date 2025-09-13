@@ -1,0 +1,36 @@
+.metersRoot {
+  display: flex;
+  flex-direction: row;
+  gap: 2.2rem;
+  margin-bottom: 1.2rem;
+  margin-left: 0.5rem;
+}
+.meterBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 120px;
+}
+.meterLabel {
+  font-size: 0.98rem;
+  color: #888;
+  margin-bottom: 0.2rem;
+}
+.meterBarBg {
+  width: 100px;
+  height: 14px;
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.2rem;
+}
+.meterBarFill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.4s cubic-bezier(0.4, 2, 0.6, 1);
+}
+.meterValue {
+  font-size: 1.05rem;
+  color: #333;
+  margin-left: 0.2rem;
+}

@@ -7,6 +7,7 @@ import express, { Express } from 'express';
 import cors from 'cors';
 // ...existing code...
 import { compareHandler } from './api/compare-handler';
+import geminiDialogueRouter from './api/gemini-dialogue';
 import { errorHandler } from './middleware/error-handler';
 
 /**
@@ -29,6 +30,9 @@ export function createApp(): Express {
 
   // Main API endpoint
   app.post('/compare', compareHandler);
+
+  // Gemini Dialogue API
+  app.use('/api', geminiDialogueRouter);
 
   // Error handling middleware (must be last)
   app.use(errorHandler);
