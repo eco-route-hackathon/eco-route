@@ -17,6 +17,7 @@ COPY backend/ ./
 FROM node:22-alpine
 WORKDIR /app
 
+
 # フロントのビルド成果物をpublicにコピー
 COPY --from=frontend-build /app/frontend/dist ./public
 # バックエンドをコピー
