@@ -46,7 +46,7 @@ export class RouteCalculator {
   private requestQueue: Array<() => Promise<any>> = [];
   private activeRequests = 0;
   private maxConcurrentRequests = 5;
-  private requestDelay = 200; // milliseconds
+  private requestDelay = 200; // milliseconds (5 requests per second)
   private lastRequestTime = 0;
 
   constructor(config: RouteCalculatorConfig) {
@@ -232,39 +232,56 @@ export class RouteCalculator {
   }
 
   /**
-   * Calculate route with waypoints
+   * Calculate route with waypoints using AWS Location Service
    */
   async calculateRouteWithWaypoints(
     origin: Location,
     destination: Location,
     waypoints: Location[]
   ): Promise<any> {
-    // For MVP, we'll calculate segments and sum them
-    let totalDistance = 0;
-    let totalTime = 0;
-    const legs: any[] = [];
-    
-    const points = [origin, ...waypoints, destination];
-    
-    for (let i = 0; i < points.length - 1; i++) {
-      const segment = await this.calculateTruckRoute(points[i], points[i + 1]);
-      totalDistance += segment.distanceKm;
-      totalTime += segment.timeHours;
-      legs.push({
-        from: points[i].name,
-        to: points[i + 1].name,
-        distanceKm: segment.distanceKm,
-        timeHours: segment.timeHours
-      });
+    try {
+      // Build waypoint positions for AWS Location Service
+      const waypointPositions = waypoints.map(wp => [wp.lon, wp.lat]);
+      
+      const input: CalculateRouteCommandInput = {
+        CalculatorName: this.calculatorName,
+        DeparturePosition: [origin.lon, origin.lat],
+        DestinationPosition: [destination.lon, destination.lat],
+        WaypointPositions: waypointPositions,
+        IncludeLegGeometry: false,
+        TravelMode: 'Car',
+        DepartureTime: new Date()
+      };
+
+      const command = new CalculateRouteCommand(input);
+      const response: CalculateRouteCommandOutput = await this.locationClient.send(command);
+
+      if (!response.Summary) {
+        throw new Error('Invalid response from AWS Location Service');
+      }
+
+      const totalDistance = response.Summary.Distance || 0;
+      const totalTime = (response.Summary.DurationSeconds || 0) / 3600; // Convert to hours
+
+      // Extract leg information
+      const legs = response.Legs?.map((leg, index) => ({
+        from: index === 0 ? origin.name : waypoints[index - 1].name,
+        to: index === waypoints.length ? destination.name : waypoints[index].name,
+        distanceKm: leg.Distance || 0,
+        timeHours: (leg.DurationSeconds || 0) / 3600
+      })) || [];
+
+      return {
+        distanceKm: totalDistance,
+        timeHours: totalTime,
+        totalDistanceKm: totalDistance,
+        totalTimeHours: totalTime,
+        legs
+      };
+    } catch (error) {
+      console.error('Error calculating route with waypoints:', error);
+      throw error;
     }
-    
-    return {
-      distanceKm: totalDistance,
-      timeHours: totalTime,
-      totalDistanceKm: totalDistance,
-      totalTimeHours: totalTime,
-      legs
-    };
   }
 
   /**
@@ -291,67 +308,32 @@ export class RouteCalculator {
     }
     
     const results: RouteResult[] = [];
-    const batchSize = 5; // Process in batches to avoid rate limiting
     
-    for (let i = 0; i < pairs.length; i += batchSize) {
-      const batch = pairs.slice(i, i + batchSize);
-      const batchResults = await Promise.all(
-        batch.map(pair => this.calculateTruckRoute(pair.origin, pair.destination))
+    // Process requests with proper throttling (5 requests per second)
+    for (let i = 0; i < pairs.length; i++) {
+      const pair = pairs[i];
+      const result = await this.throttleRequest(() => 
+        this.calculateTruckRoute(pair.origin, pair.destination)
       );
-      results.push(...batchResults);
-      
-      // Add small delay between batches to avoid rate limiting
-      if (i + batchSize < pairs.length) {
-        await new Promise(resolve => setTimeout(resolve, this.requestDelay));
-      }
+      results.push(result);
     }
     
     return results;
   }
 
   /**
-   * Throttle requests to respect rate limits
+   * Throttle requests to respect rate limits (5 requests per second)
    */
   private async throttleRequest<T>(fn: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const execute = async () => {
-        // Enforce delay between requests
-        const now = Date.now();
-        const timeSinceLastRequest = now - this.lastRequestTime;
-        if (timeSinceLastRequest < this.requestDelay) {
-          await new Promise(r => setTimeout(r, this.requestDelay - timeSinceLastRequest));
-        }
-        
-        if (this.activeRequests >= this.maxConcurrentRequests) {
-          // Queue the request
-          this.requestQueue.push(() => fn().then(resolve).catch(reject));
-          return;
-        }
-
-        this.activeRequests++;
-        this.lastRequestTime = Date.now();
-        
-        try {
-          const result = await fn();
-          resolve(result);
-        } catch (error) {
-          reject(error);
-        } finally {
-          this.activeRequests--;
-          
-          // Process next queued request with delay
-          if (this.requestQueue.length > 0) {
-            setTimeout(() => {
-              const next = this.requestQueue.shift();
-              if (next) {
-                next();
-              }
-            }, this.requestDelay);
-          }
-        }
-      };
-      
-      execute();
-    });
+    // Ensure minimum delay between requests (200ms = 5 req/sec)
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    
+    if (timeSinceLastRequest < this.requestDelay) {
+      await new Promise(resolve => setTimeout(resolve, this.requestDelay - timeSinceLastRequest));
+    }
+    
+    this.lastRequestTime = Date.now();
+    return await fn();
   }
 }
