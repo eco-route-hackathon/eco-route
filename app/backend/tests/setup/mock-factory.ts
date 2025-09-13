@@ -88,6 +88,98 @@ export class MockFactory {
   }
 
   /**
+   * Create AWS Location Service error mock
+   * Simulates AWS service failures
+   */
+  static createLocationErrorMock() {
+    const locationMock = mockClient(LocationClient);
+    
+    // Simulate AWS Location Service failure
+    locationMock.on(CalculateRouteCommand).rejects({
+      name: 'ResourceNotFoundException',
+      message: 'Route calculator not found',
+      $metadata: {
+        httpStatusCode: 404,
+        requestId: 'test-request-id'
+      }
+    });
+
+    return locationMock;
+  }
+
+  /**
+   * Create S3 access error mock
+   * Simulates S3 bucket access failures
+   */
+  static createS3ErrorMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Simulate S3 access denied error
+    s3Mock.on(GetObjectCommand).rejects({
+      name: 'AccessDenied',
+      message: 'Access Denied',
+      $metadata: {
+        httpStatusCode: 403,
+        requestId: 'test-s3-request-id'
+      }
+    });
+
+    return s3Mock;
+  }
+
+  /**
+   * Create S3 no such bucket error mock
+   * Simulates missing S3 bucket
+   */
+  static createS3NoBucketMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Simulate S3 bucket not found error
+    s3Mock.on(GetObjectCommand).rejects({
+      name: 'NoSuchBucket',
+      message: 'The specified bucket does not exist',
+      $metadata: {
+        httpStatusCode: 404,
+        requestId: 'test-s3-bucket-request-id'
+      }
+    });
+
+    return s3Mock;
+  }
+
+  /**
+   * Create corrupted CSV data mock
+   * Simulates invalid CSV format
+   */
+  static createCorruptedCsvMock() {
+    const s3Mock = mockClient(S3Client);
+    
+    // Mock corrupted CSV data
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}modes.csv`
+    }).resolves({
+      Body: Readable.from('invalid,csv,format,with,missing,columns') as any
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}locations.csv`
+    }).resolves({
+      Body: Readable.from('corrupted,data\nmissing,values') as any
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}links.csv`
+    }).resolves({
+      Body: Readable.from('invalid,link,data') as any
+    });
+
+    return s3Mock;
+  }
+
+  /**
    * Create a valid comparison request
    * Use this as base for all test requests
    */

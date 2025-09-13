@@ -1,0 +1,11 @@
+from,to,mode,distance_km,time_hours
+TokyoPort,OsakaPort,ship,410,20.5
+TokyoPort,NagoyaPort,ship,280,14.0
+NagoyaPort,OsakaPort,ship,130,6.5
+YokohamaPort,KobePort,ship,420,21.0
+TokyoPort,HakataPort,ship,890,44.5
+OsakaPort,HakataPort,ship,480,24.0
+KobePort,HakataPort,ship,450,22.5
+TokyoPort,YokohamaPort,ship,30,1.5
+OsakaPort,KobePort,ship,35,1.8
+NagoyaPort,HakataPort,ship,550,27.5

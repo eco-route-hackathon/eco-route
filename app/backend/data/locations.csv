@@ -1,0 +1,16 @@
+id,name,lat,lon,type
+1,Tokyo,35.6762,139.6503,city
+2,Osaka,34.6937,135.5023,city
+3,TokyoPort,35.6551,139.7595,port
+4,OsakaPort,34.6500,135.4300,port
+5,Nagoya,35.1815,136.9066,city
+6,NagoyaPort,35.0833,136.8833,port
+7,Yokohama,35.4437,139.6380,city
+8,YokohamaPort,35.4400,139.6500,port
+9,Kyoto,35.0116,135.7681,city
+10,Kobe,34.6901,135.1956,city
+11,KobePort,34.6833,135.2000,port
+12,Fukuoka,33.5904,130.4017,city
+13,HakataPort,33.5833,130.4167,port
+14,Sapporo,43.0642,141.3469,city
+15,Okinawa,26.2124,127.6792,city

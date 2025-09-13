@@ -6,6 +6,8 @@
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { parse } from 'csv-parse';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 import { 
   Location, 
   LocationType, 
@@ -28,6 +30,7 @@ interface CsvLoaderConfig {
   bucketName: string;
   region: string;
   cacheEnabled?: boolean;
+  localDataPath?: string; // For local development
 }
 
 interface LoadOptions {
@@ -47,10 +50,12 @@ export class CsvDataLoader {
   private cache: Map<string, any> = new Map();
   private cacheEnabled: boolean;
   private cacheExpiration: number = 3600000; // 1 hour default
+  private localDataPath?: string;
 
   constructor(config: CsvLoaderConfig) {
     this.bucketName = config.bucketName;
     this.cacheEnabled = config.cacheEnabled ?? true;
+    this.localDataPath = config.localDataPath;
     this.s3Client = new S3Client({ region: config.region });
   }
 
@@ -63,6 +68,57 @@ export class CsvDataLoader {
     if (ms === 0) {
       this.clearCache();
     }
+  }
+
+  /**
+   * Load CSV data from local file (for development)
+   */
+  private async loadFromLocalFile(filename: string): Promise<string> {
+    if (!this.localDataPath) {
+      throw new Error('Local data path not configured');
+    }
+    
+    const filePath = join(this.localDataPath, filename);
+    if (!existsSync(filePath)) {
+      throw new Error(`Local CSV file not found: ${filePath}`);
+    }
+    
+    return readFileSync(filePath, 'utf-8');
+  }
+
+  /**
+   * Load CSV data from S3 or local file based on configuration
+   */
+  private async loadCsvData(key: string): Promise<string> {
+    // Try local file first if configured
+    if (this.localDataPath) {
+      try {
+        return await this.loadFromLocalFile(key.replace('data/', ''));
+      } catch (error) {
+        console.warn(`Failed to load from local file: ${error}`);
+        // Fall back to S3
+      }
+    }
+
+    // Load from S3
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: key
+    });
+
+    const response = await this.s3Client.send(command);
+    if (!response.Body) {
+      throw new Error(`No data found for key: ${key}`);
+    }
+
+    const chunks: Buffer[] = [];
+    const stream = response.Body as Readable;
+    
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    
+    return Buffer.concat(chunks).toString('utf-8');
   }
 
   async loadLocations(options: LoadOptions = {}): Promise<Location[]> {
@@ -225,19 +281,9 @@ export class CsvDataLoader {
   }
 
   private async fetchAndParseCsv(key: string, options: LoadOptions): Promise<any[]> {
-    const command = new GetObjectCommand({
-      Bucket: this.bucketName,
-      Key: `latest/${key}`
-    });
-
     try {
-      const response = await this.s3Client.send(command);
-      
-      if (!response.Body) {
-        return [];
-      }
-
-      const stream = response.Body as Readable;
+      // Use the new unified CSV loading method
+      const csvContent = await this.loadCsvData(`data/${key}`);
       const records: any[] = [];
 
       return new Promise((resolve, reject) => {
@@ -274,8 +320,9 @@ export class CsvDataLoader {
         });
         
         parser.on('end', () => resolve(records));
-
-        stream.pipe(parser);
+        
+        parser.write(csvContent);
+        parser.end();
       });
     } catch (error: any) {
       if (error.name === 'AccessDenied') {
