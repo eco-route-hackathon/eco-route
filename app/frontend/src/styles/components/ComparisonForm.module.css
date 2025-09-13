@@ -99,6 +99,7 @@
   background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
   transform: translateY(-1px);
+  animation: pulse 1s ease-in-out;
 }
 
 .submitButton:active:not(:disabled) {

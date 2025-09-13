@@ -23,7 +23,7 @@ interface ComparisonChartProps {
   recommendation: PlanType;
 }
 
-export const ComparisonChart: React.FC<ComparisonChartProps> = ({
+const ComparisonChart: React.FC<ComparisonChartProps> = ({
   candidates,
   recommendation
 }) => {
@@ -198,3 +198,5 @@ export const ComparisonChart: React.FC<ComparisonChartProps> = ({
     </div>
   );
 };
+
+export default ComparisonChart;

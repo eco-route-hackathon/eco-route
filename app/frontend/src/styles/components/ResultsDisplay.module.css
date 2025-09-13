@@ -2,6 +2,7 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
+  will-change: contents;
 }
 
 /* ローディング状態 */
@@ -146,6 +147,7 @@
 /* 推奨セクション */
 .recommendationSection {
   margin-bottom: 2rem;
+  animation: fadeIn 0.6s ease-out;
 }
 
 .recommendationHeader {
@@ -174,6 +176,7 @@
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.8s ease-out 0.3s both;
 }
 
 .chartTitle {

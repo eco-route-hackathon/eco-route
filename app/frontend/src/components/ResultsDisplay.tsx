@@ -1,7 +1,7 @@
 import React from 'react';
 import type { ComparisonResult } from '../types';
 import { PlanCard } from './PlanCard';
-import { ComparisonChart } from './ComparisonChart';
+import { LazyComparisonChart } from './LazyComparisonChart';
 import { LoadingSpinner } from './LoadingSpinner';
 import styles from '../styles/components/ResultsDisplay.module.css';
 
@@ -32,13 +32,14 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   if (error) {
     return (
       <div className={styles.container}>
-        <div className={styles.errorContainer}>
-          <div className={styles.errorIcon}>⚠️</div>
+        <div className={styles.errorContainer} role="alert" aria-live="assertive">
+          <div className={styles.errorIcon} aria-hidden="true">⚠️</div>
           <h3 className={styles.errorTitle}>エラーが発生しました</h3>
           <p className={styles.errorMessage}>{error}</p>
           <button 
             className={styles.retryButton}
             onClick={() => window.location.reload()}
+            aria-label="ページを再読み込みしてエラーを解決する"
           >
             再読み込み
           </button>
@@ -109,7 +110,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       {/* 比較グラフ */}
       <div className={styles.chartSection}>
         <h3 className={styles.chartTitle}>📈 詳細比較</h3>
-        <ComparisonChart candidates={candidates} recommendation={recommendation} />
+        <LazyComparisonChart candidates={candidates} recommendation={recommendation} />
       </div>
 
       {/* ルート詳細 */}
