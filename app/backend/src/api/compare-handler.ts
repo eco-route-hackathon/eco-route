@@ -4,8 +4,8 @@
  */
 
 import { Request, Response, NextFunction } from 'express';
-import { 
-  ComparisonRequest, 
+import {
+  ComparisonRequest,
   ComparisonResult,
   TransportPlan,
   PlanType,
@@ -13,7 +13,7 @@ import {
   LocationType,
   TransportMode,
   ModeType,
-  ErrorCode
+  ErrorCode,
 } from '../lib/shared-types';
 import { validateComparisonRequest, parseComparisonRequest } from './validators';
 import { CsvDataLoader } from '../services/CsvDataLoader';
@@ -24,16 +24,16 @@ import { ShipLink } from '../services/CsvDataLoader';
 // Initialize services (in production, these would be dependency injected)
 const csvLoader = new CsvDataLoader({
   bucketName: process.env.S3_BUCKET || 'eco-route-data',
-  region: process.env.AWS_REGION || 'ap-northeast-1'
+  region: process.env.AWS_REGION || 'ap-northeast-1',
 });
 
 const routeCalculator = new RouteCalculator({
   calculatorName: process.env.ROUTE_CALCULATOR_NAME || 'eco-route-calculator',
-  region: process.env.AWS_REGION || 'ap-northeast-1'
+  region: process.env.AWS_REGION || 'ap-northeast-1',
 });
 
 const scoreOptimizer = new ScoreOptimizer({
-  normalizationMethod: 'min-max'
+  normalizationMethod: 'min-max',
 });
 
 /**
@@ -64,7 +64,7 @@ export async function compareHandler(
     const [locations, modes, shipLinks] = await Promise.all([
       csvLoader.loadLocations(),
       csvLoader.loadTransportModes(),
-      csvLoader.loadShipLinks()
+      csvLoader.loadShipLinks(),
     ]);
 
     // 4. Find origin and destination locations
@@ -87,8 +87,8 @@ export async function compareHandler(
     }
 
     // 5. Get transport mode parameters
-    const truckMode = modes.find(m => m.mode === ModeType.TRUCK);
-    const shipMode = modes.find(m => m.mode === ModeType.SHIP);
+    const truckMode = modes.find((m) => m.mode === ModeType.TRUCK);
+    const shipMode = modes.find((m) => m.mode === ModeType.SHIP);
 
     if (!truckMode) {
       const error: any = new Error('Truck mode configuration not found');
@@ -99,20 +99,20 @@ export async function compareHandler(
 
     // 6. Calculate truck-only route
     const truckRoute = await routeCalculator.calculateTruckRoute(origin, destination);
-    
+
     // Calculate truck plan metrics
     const truckPlan: TransportPlan = {
       plan: PlanType.TRUCK,
       timeH: truckRoute.timeHours,
       costJpy: truckRoute.distanceKm * truckMode.costPerKm,
-      co2Kg: (truckRoute.distanceKm * truckMode.co2KgPerTonKm * request.weightKg) / 1000
+      co2Kg: (truckRoute.distanceKm * truckMode.co2KgPerTonKm * request.weightKg) / 1000,
     };
 
     const plans: TransportPlan[] = [truckPlan];
 
     // 7. Try to calculate truck+ship route
     let shipPlan: TransportPlan | null = null;
-    
+
     // Find nearest ports
     const originPort = routeCalculator.findNearestPort(origin, locations);
     const destinationPort = routeCalculator.findNearestPort(destination, locations);
@@ -120,14 +120,14 @@ export async function compareHandler(
     if (originPort && destinationPort && shipMode) {
       // Find ship link between ports
       const shipLink = findShipLink(shipLinks, originPort.id, destinationPort.id);
-      
+
       if (shipLink) {
         // Calculate multi-modal route
         const shipLinkInfo = {
           from: originPort,
           to: destinationPort,
           distanceKm: shipLink.distanceKm,
-          timeHours: shipLink.timeHours
+          timeHours: shipLink.timeHours,
         };
 
         const legs = await routeCalculator.planMultiModalRoute(
@@ -145,7 +145,7 @@ export async function compareHandler(
 
         for (const leg of legs) {
           totalTime += leg.timeHours;
-          
+
           if (leg.mode === ModeType.TRUCK) {
             totalCost += leg.distanceKm * truckMode.costPerKm;
             totalCo2 += (leg.distanceKm * truckMode.co2KgPerTonKm * request.weightKg) / 1000;
@@ -160,7 +160,7 @@ export async function compareHandler(
           timeH: totalTime,
           costJpy: totalCost,
           co2Kg: totalCo2,
-          legs
+          legs,
         };
 
         plans.push(shipPlan);
@@ -168,18 +168,13 @@ export async function compareHandler(
     }
 
     // 8. Compare plans and get recommendation
-    const comparisonResult = scoreOptimizer.generateComparisonResult(
-      plans,
-      request.weights,
-      {
-        truckDistance: truckRoute.distanceKm,
-        calculationTimeMs: Date.now() - startTime
-      }
-    );
+    const comparisonResult = scoreOptimizer.generateComparisonResult(plans, request.weights, {
+      truckDistance: truckRoute.distanceKm,
+      calculationTimeMs: Date.now() - startTime,
+    });
 
     // 9. Send response
     res.json(comparisonResult);
-
   } catch (error: any) {
     // Pass to error handler middleware
     next(error);
@@ -191,9 +186,8 @@ export async function compareHandler(
  */
 function findLocation(locations: Location[], name: string): Location | undefined {
   const normalizedName = name.toLowerCase().trim();
-  return locations.find(loc => 
-    loc.name.toLowerCase() === normalizedName ||
-    loc.id.toLowerCase() === normalizedName
+  return locations.find(
+    (loc) => loc.name.toLowerCase() === normalizedName || loc.id.toLowerCase() === normalizedName
   );
 }
 
@@ -201,21 +195,20 @@ function findLocation(locations: Location[], name: string): Location | undefined
  * Find ship link between ports
  */
 function findShipLink(
-  links: ShipLink[], 
-  fromPortId: string, 
+  links: ShipLink[],
+  fromPortId: string,
   toPortId: string
 ): ShipLink | undefined {
   // Normalize IDs for comparison (handle both numeric and string IDs)
   const normalizeId = (id: string) => id.toString().trim();
   const fromId = normalizeId(fromPortId);
   const toId = normalizeId(toPortId);
-  
-  return links.find(link => {
+
+  return links.find((link) => {
     const linkFromId = normalizeId(link.fromPortId);
     const linkToId = normalizeId(link.toPortId);
     return (
-      (linkFromId === fromId && linkToId === toId) ||
-      (linkFromId === toId && linkToId === fromId)
+      (linkFromId === fromId && linkToId === toId) || (linkFromId === toId && linkToId === fromId)
     );
   });
 }
