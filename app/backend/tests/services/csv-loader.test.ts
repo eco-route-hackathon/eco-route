@@ -30,8 +30,13 @@ function createS3Stream(content: string) {
 
 describe('CsvDataLoader Service', () => {
   let loader: CsvDataLoader;
+  let originalLocalPath: string | undefined;
 
   beforeEach(() => {
+    // 単体テストではローカルファイルを使わないように環境変数を一時的に削除
+    originalLocalPath = process.env.LOCAL_DATA_PATH;
+    delete process.env.LOCAL_DATA_PATH;
+
     s3Mock.reset();
     loader = new CsvDataLoader({
       bucketName: TEST_CONFIG.aws.s3Bucket,
@@ -41,6 +46,11 @@ describe('CsvDataLoader Service', () => {
   });
 
   afterEach(() => {
+    // 環境変数を復元
+    if (originalLocalPath) {
+      process.env.LOCAL_DATA_PATH = originalLocalPath;
+    }
+
     vi.clearAllMocks();
     loader.clearCache();
   });
