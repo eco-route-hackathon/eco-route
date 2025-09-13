@@ -259,8 +259,6 @@ export class RouteCalculator {
     }
     
     return {
-      distanceKm: totalDistance,
-      timeHours: totalTime,
       totalDistanceKm: totalDistance,
       totalTimeHours: totalTime,
       legs
