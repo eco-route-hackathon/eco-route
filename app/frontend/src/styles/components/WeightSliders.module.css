@@ -1,0 +1,251 @@
+.container {
+  background: #f8f9fb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e8f0fe;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.slidersContainer {
+  margin-bottom: 1.5rem;
+}
+
+.sliderGroup {
+  margin-bottom: 1.25rem;
+}
+
+.sliderLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.sliderName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.icon {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.label {
+  font-weight: 600;
+  color: #34495e;
+  font-size: 0.95rem;
+}
+
+.description {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-left: 0.25rem;
+}
+
+.percentage {
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 40px;
+  text-align: right;
+}
+
+.sliderWrapper {
+  position: relative;
+  margin: 0.5rem 0;
+}
+
+.slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #4CAF50;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  border-color: #45a049;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #4CAF50;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.slider:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.slider:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  border-color: #bdc3c7;
+}
+
+.presetsContainer {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e8f0fe;
+  padding-top: 1.5rem;
+}
+
+.presetsTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.presetButtons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.presetButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.875rem 0.5rem;
+  background: white;
+  border: 2px solid #e8f0fe;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.presetButton:hover:not(:disabled) {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.presetButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.presetButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.presetIcon {
+  font-size: 1.2rem;
+}
+
+.presetLabel {
+  font-weight: 500;
+}
+
+.resetButton {
+  width: 100%;
+  padding: 0.75rem;
+  background: white;
+  border: 2px solid #e8f0fe;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: #ecf0f1;
+  border-color: #bdc3c7;
+}
+
+.resetButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.totalDisplay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e8f0fe;
+  margin-top: 1rem;
+}
+
+.totalLabel {
+  font-weight: 600;
+  color: #34495e;
+}
+
+.totalValue {
+  font-weight: 700;
+  color: #4CAF50;
+  font-size: 1.1rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .presetButtons {
+    grid-template-columns: 1fr;
+  }
+  
+  .presetButton {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .sliderName {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .description {
+    margin-left: 0;
+  }
+}

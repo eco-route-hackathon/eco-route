@@ -1,0 +1,132 @@
+/* リセットCSS */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic UI', 'Meiryo UI', sans-serif;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root {
+  isolation: isolate;
+}
+
+/* グローバルスタイル */
+:root {
+  --primary-color: #4CAF50;
+  --primary-dark: #45a049;
+  --secondary-color: #2196F3;
+  --error-color: #e74c3c;
+  --warning-color: #f39c12;
+  --success-color: #27ae60;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --border-color: #e1e8ed;
+  --background-light: #f8f9fb;
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --radius: 8px;
+  --radius-large: 12px;
+  
+  /* レスポンシブブレークポイント */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--text-primary);
+  background-color: #ffffff;
+}
+
+/* スクロールの改善 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* フォーカス時のアウトライン改善 */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 選択時のハイライト */
+::selection {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+/* 印刷スタイル */
+@media print {
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+/* スクリーンリーダー専用 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 高コントラスト対応 */
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --border-color: #000000;
+    --primary-color: #006600;
+    --error-color: #cc0000;
+  }
+}

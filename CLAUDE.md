@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ### Development
-- **Frontend development**: `cd frontend && npm install && npm run dev` - Run Vite dev server for React frontend
-- **Backend development**: `cd backend && npm install && npm run dev` - Run ts-node/local server for Node.js backend
+- **Frontend development**: `cd app/frontend && npm install && npm run dev` - Run Vite dev server for React frontend
+- **Backend development**: `cd app/backend && npm install && npm run dev` - Run ts-node/local server for Node.js backend
 - **Build**: `npm run build` in each package directory - Output to `dist/`
 - **Test**: `npm test` in each package - Uses Vitest/Jest
 - **Lint**: `npm run lint` - ESLint with @typescript-eslint
@@ -22,10 +22,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is an eco-route MVP project comparing truck vs truck+ship transportation with time/cost/CO2 metrics.
 
 ### Core Structure
-- **frontend/**: React + Vite application that provides form input and displays comparison results
-- **backend/**: Node.js 22 + TypeScript API implementing `/compare` endpoint (Express locally, Lambda in production)
-- **data/**: CSV datasets (modes.csv, links.csv, locations.csv) for transportation calculations
-- **infra/**: Minimal IaC setup for API Gateway, Lambda, S3 read permissions
+- **app/frontend/**: React + Vite application that provides form input and displays comparison results
+- **app/backend/**: Node.js 22 + TypeScript API implementing `/compare` endpoint (Express locally, Lambda in production)
+- **app/data/**: CSV datasets (modes.csv, links.csv, locations.csv) for transportation calculations
+- **app/infra/**: Minimal IaC setup for API Gateway, Lambda, S3 read permissions
+- **オープンデータ/**: Government open data for shipping routes and transport statistics
+- **specs/**: Planning documents, specifications, and task lists
+
+### Libraries
+- **route-calculator**: Calculate routes and emissions using AWS Location Service
+- **csv-parser**: Parse open data CSV files from S3
+- **score-optimizer**: Calculate weighted scores for multi-criteria optimization
 
 ### API Contract
 **POST /compare**
@@ -62,9 +69,31 @@ This is an eco-route MVP project comparing truck vs truck+ship transportation wi
 
 ### Environment Variables
 Required for backend:
-- `AWS_REGION`: AWS region for services
+- `AWS_REGION`: AWS region for services (default: ap-northeast-1)
 - `ROUTE_CALCULATOR_NAME`: Amazon Location route calculator name
 - `S3_BUCKET`: S3 bucket name for CSV data
+- `NODE_ENV`: Environment (development/production)
+- `PORT`: Local server port (default: 3000)
+
+### AWS Setup
+1. **Create Amazon Location Route Calculator**:
+   ```bash
+   aws location create-route-calculator \
+     --calculator-name eco-route-calculator \
+     --data-source HERE
+   ```
+
+2. **Upload CSV data to S3**:
+   ```bash
+   aws s3 cp app/data/ s3://eco-route-data/latest/ --recursive --include "*.csv"
+   ```
+
+3. **Deploy with CDK** (from app/infra/):
+   ```bash
+   cd app/infra
+   cdk bootstrap
+   cdk deploy EcoRouteStack
+   ```
 
 ### Commit Convention
 Use Conventional Commits:
@@ -76,3 +105,12 @@ Use Conventional Commits:
 - `refactor:` code refactoring
 
 Example: `feat(backend): add compare handler`
+
+## Recent Changes
+
+### 2025-09-12
+- Created feature specification for MVP implementation
+- Designed data models and API contracts (OpenAPI 3.1)
+- Set up project structure for frontend/backend/infra
+- Integrated オープンデータ for shipping route data
+- Configured AWS Location Service for route calculations
