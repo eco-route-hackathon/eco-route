@@ -48,6 +48,9 @@ export interface TransportMode {
   costPerKm: number;            // Cost in JPY per kilometer
   co2KgPerTonKm: number;        // CO2 emissions per ton-kilometer
   avgSpeedKmph: number;         // Average speed in km/h
+  weightCapacityKg?: number;    // Maximum cargo capacity
+  co2BaseFactor?: number;       // Base CO2 emission factor
+  co2WeightFactor?: number;     // Weight scaling factor for CO2
 }
 
 /**
