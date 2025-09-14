@@ -3,6 +3,7 @@ import type { FormState } from '../types';
 import { AVAILABLE_LOCATIONS } from '../types';
 import { validateWeight } from '../utils/formatters';
 import { WeightSliders } from './WeightSliders';
+import { useLocationsAPI } from '../hooks/useLocationsAPI';
 import styles from '../styles/components/ComparisonForm.module.css';
 
 interface ComparisonFormProps {
@@ -18,6 +19,14 @@ export const ComparisonForm: React.FC<ComparisonFormProps> = ({
   onSubmit,
   isLoading
 }) => {
+  // 都市一覧を取得
+  const { locations, loading: locationsLoading, error: locationsError } = useLocationsAPI();
+
+  // APIエラー時やローディング中はフォールバックを使用
+  const availableLocations = locationsLoading || locationsError || locations.length === 0
+    ? AVAILABLE_LOCATIONS
+    : locations;
+
   // 重量のバリデーションエラー
   const weightError = validateWeight(formState.weightKg);
   
@@ -53,9 +62,9 @@ export const ComparisonForm: React.FC<ComparisonFormProps> = ({
           className={styles.select}
           value={formState.origin}
           onChange={(e) => handleInputChange('origin', e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || locationsLoading}
         >
-          {AVAILABLE_LOCATIONS.map((location) => (
+          {availableLocations.map((location) => (
             <option key={location.value} value={location.value}>
               {location.label}
             </option>
@@ -73,9 +82,9 @@ export const ComparisonForm: React.FC<ComparisonFormProps> = ({
           className={styles.select}
           value={formState.destination}
           onChange={(e) => handleInputChange('destination', e.target.value)}
-          disabled={isLoading}
+          disabled={isLoading || locationsLoading}
         >
-          {AVAILABLE_LOCATIONS.map((location) => (
+          {availableLocations.map((location) => (
             <option key={location.value} value={location.value}>
               {location.label}
             </option>

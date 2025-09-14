@@ -226,11 +226,19 @@ export const WEIGHT_PRESETS: WeightPreset[] = [
 ];
 
 /**
- * 利用可能な都市（MVPでは固定）
+ * 利用可能な都市（フォールバック用）
+ * APIが失敗した場合のバックアップとして使用
  */
 export const AVAILABLE_LOCATIONS = [
-  { value: 'Tokyo', label: '東京' },
-  { value: 'Osaka', label: '大阪' }
+  { value: 'Tokyo', label: 'Tokyo' },
+  { value: 'Osaka', label: 'Osaka' },
+  { value: 'Nagoya', label: 'Nagoya' },
+  { value: 'Yokohama', label: 'Yokohama' },
+  { value: 'Kyoto', label: 'Kyoto' },
+  { value: 'Kobe', label: 'Kobe' },
+  { value: 'Fukuoka', label: 'Fukuoka' },
+  { value: 'Sapporo', label: 'Sapporo' },
+  { value: 'Okinawa', label: 'Okinawa' }
 ];
 
 /**

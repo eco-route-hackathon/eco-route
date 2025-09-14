@@ -6,6 +6,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { compareHandler } from './api/compare-handler';
+import { locationsHandler } from './api/locations-handler';
 import { errorHandler } from './middleware/error-handler';
 
 /**
@@ -42,6 +43,9 @@ export function createApp(): Express {
       timestamp: new Date().toISOString(),
     });
   });
+
+  // Locations endpoint
+  app.get('/locations', locationsHandler);
 
   // Main API endpoint
   app.post('/compare', compareHandler);
