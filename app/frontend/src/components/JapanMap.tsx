@@ -14,58 +14,21 @@ interface JapanMapProps {
 
 const JapanMap: React.FC<JapanMapProps> = ({ recommendedLegs }) => {
   // ルート座標列を生成
-  // 英語⇔日本語対応のための地名変換辞書
-  const nameMap: Record<string, string> = {
-    Tokyo: '東京',
-    東京: 'Tokyo',
-    Osaka: '大阪',
-    大阪: 'Osaka',
-    Nagoya: '名古屋',
-    名古屋: 'Nagoya',
-    Yokohama: '横浜',
-    横浜: 'Yokohama',
-    Kyoto: '京都',
-    京都: 'Kyoto',
-    Kobe: '神戸',
-    神戸: 'Kobe',
-    Fukuoka: '福岡',
-    福岡: 'Fukuoka',
-    Sapporo: '札幌',
-    札幌: 'Sapporo',
-    Okinawa: '沖縄',
-    沖縄: 'Okinawa',
-    TokyoPort: '東京港',
-    東京港: 'TokyoPort',
-    OsakaPort: '大阪港',
-    大阪港: 'OsakaPort',
-    NagoyaPort: '名古屋港',
-    名古屋港: 'NagoyaPort',
-    YokohamaPort: '横浜港',
-    横浜港: 'YokohamaPort',
-    KobePort: '神戸港',
-    神戸港: 'KobePort',
-    HakataPort: '博多港',
-    博多港: 'HakataPort',
-  };
-  function findLocationByName(name: string) {
-    return (
-      MAP_LOCATIONS.find((l) => l.name === name) ||
-      MAP_LOCATIONS.find((l) => l.name === nameMap[name])
-    );
-  }
   const routeLatLngs =
     recommendedLegs && recommendedLegs.length > 0
       ? (recommendedLegs
           .map((leg) => {
             // from座標
-            const from = findLocationByName(leg.from);
+            const from = MAP_LOCATIONS.find((l) => l.name === leg.from);
             return from ? [from.lat, from.lon] : null;
           })
           .filter(Boolean) as [number, number][])
       : [];
   // 最後のto座標も追加
   if (recommendedLegs && recommendedLegs.length > 0) {
-    const lastTo = findLocationByName(recommendedLegs[recommendedLegs.length - 1].to);
+    const lastTo = MAP_LOCATIONS.find(
+      (l) => l.name === recommendedLegs[recommendedLegs.length - 1].to
+    );
     if (lastTo) routeLatLngs.push([lastTo.lat, lastTo.lon]);
   }
 

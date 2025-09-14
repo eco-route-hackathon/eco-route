@@ -1,28 +1,27 @@
 .card {
-  background: #f6f6f6;
-  border-radius: 8px 8px 6px 6px;
+  background: white;
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
-  box-shadow: 2px 2px 8px #b0c4de;
-  border: 2px solid #3a6ea5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
   transition: all 0.3s ease;
   animation: slideInLeft 0.6s ease-out;
   will-change: transform;
 }
 
 .recommended {
-  border-color: #245edb;
-  background: linear-gradient(180deg, #e3eefd 0%, #f6f6f6 100%);
-  box-shadow: 0 4px 16px #b0c4de;
+  border-color: #4CAF50;
+  background: linear-gradient(135deg, #f8fff8 0%, #fff 100%);
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
 }
 
 .alternative {
-  border-color: #7f9db9;
+  border-color: #e1e8ed;
 }
 
 .primary {
   transform: scale(1.02);
-  border-width: 3px;
 }
 
 .card:nth-child(2) {
@@ -31,7 +30,7 @@
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px #7f9db9;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .secondary {
@@ -44,11 +43,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  background: linear-gradient(90deg, #245edb 0%, #3a6ea5 100%);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px 6px 0 0;
-  border-bottom: 1.5px solid #7f9db9;
 }
 
 .planInfo {
@@ -62,25 +56,22 @@
 }
 
 .planTitle {
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #fff;
+  color: #2c3e50;
   margin: 0;
-  text-shadow: 1px 1px 0 #245edb;
 }
 
 .badge {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background: #e3eefd;
-  color: #245edb;
+  background: #4CAF50;
+  color: white;
   padding: 0.5rem 0.75rem;
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  border: 1.5px solid #245edb;
-  box-shadow: 1px 1px 2px #7f9db9;
 }
 
 .badgeIcon {
@@ -156,7 +147,7 @@
   padding: 1rem;
   background: #f8f9fb;
   border-radius: 8px;
-  border-left: 3px solid #4caf50;
+  border-left: 3px solid #4CAF50;
 }
 
 .routeTitle {

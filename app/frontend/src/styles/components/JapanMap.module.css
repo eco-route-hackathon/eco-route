@@ -18,7 +18,7 @@
 
 .markerRecommended {
   fill: gold;
-  stroke: #245edb;
+  stroke: #bfa500;
   stroke-width: 3px;
   filter: drop-shadow(0 0 6px gold);
 }
@@ -43,6 +43,6 @@
 .starIcon {
   font-size: 1.5rem;
   color: gold;
-  filter: drop-shadow(0 0 4px #245edb);
+  filter: drop-shadow(0 0 4px gold);
   vertical-align: middle;
 }
