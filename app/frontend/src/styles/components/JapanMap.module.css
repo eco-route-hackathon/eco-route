@@ -1,0 +1,48 @@
+/* JapanMap.module.css - マップ用スタイル */
+
+.marker {
+  stroke: #fff;
+  stroke-width: 2px;
+  cursor: pointer;
+}
+
+.markerCity {
+  fill: #ff4136;
+  /* 赤 */
+}
+
+.markerPort {
+  fill: #0074d9;
+  /* 青 */
+}
+
+.markerRecommended {
+  fill: gold;
+  stroke: #bfa500;
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 6px gold);
+}
+
+.markerSmall {
+  r: 5;
+}
+
+.routeLine {
+  stroke: #ffb300;
+  stroke-width: 5px;
+  fill: none;
+  filter: drop-shadow(0 0 6px gold);
+}
+
+.routeLineDefault {
+  stroke: #ff4136;
+  stroke-width: 3px;
+  fill: none;
+}
+
+.starIcon {
+  font-size: 1.5rem;
+  color: gold;
+  filter: drop-shadow(0 0 4px gold);
+  vertical-align: middle;
+}
