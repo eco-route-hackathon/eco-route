@@ -358,34 +358,30 @@ describe('RouteCalculator Service', () => {
   });
 
   describe('Route Optimization', () => {
-    it.skip('should optimize route with waypoints', async () => {
+    it('should optimize route with waypoints', async () => {
       // TODO(#issue-1): Fix waypoint distance calculation logic
       // Currently returns 1100km instead of expected 550km
-      locationMock.on(CalculateRouteCommand).resolves({
-        Summary: {
-          Distance: 550,
-          DurationSeconds: 27000, // 7.5 hours
-          RouteBBox: [],
-          DataSource: 'Here',
-          DistanceUnit: 'Kilometers'
-        },
-        Legs: [
-          {
+      // Mock for Tokyo -> Nagano leg
+      locationMock.on(CalculateRouteCommand)
+        .resolvesOnce({
+          Summary: {
             Distance: 250,
-            DurationSeconds: 12600,
-            StartPosition: [139.6917, 35.6895],
-            EndPosition: [138.2529, 36.2048],
-            Steps: []
-          },
-          {
-            Distance: 300,
-            DurationSeconds: 14400,
-            StartPosition: [138.2529, 36.2048],
-            EndPosition: [135.5023, 34.6937],
-            Steps: []
+            DurationSeconds: 12600, // 3.5 hours
+            RouteBBox: [],
+            DataSource: 'Here',
+            DistanceUnit: 'Kilometers'
           }
-        ]
-      });
+        })
+        // Mock for Nagano -> Osaka leg
+        .resolvesOnce({
+          Summary: {
+            Distance: 300,
+            DurationSeconds: 14400, // 4 hours
+            RouteBBox: [],
+            DataSource: 'Here',
+            DistanceUnit: 'Kilometers'
+          }
+        });
 
       const origin: Location = {
         id: 'tokyo',
