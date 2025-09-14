@@ -1,5 +1,17 @@
-import axios, { AxiosError } from 'axios';
-import type { ComparisonRequest, ComparisonResult, ErrorResponse } from '../types';
+import axios from 'axios';
+
+// axios.isAxiosErrorの代用型ガード
+function isAxiosError(
+  err: unknown
+): err is { isAxiosError: boolean; code?: string; response?: any; request?: any } {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'isAxiosError' in err &&
+    (err as any).isAxiosError === true
+  );
+}
+import type { ComparisonRequest, ComparisonResult } from '../types';
 
 // API設定
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -16,25 +28,20 @@ const apiClient = axios.create({
 
 // エラーメッセージの取得
 const getErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<ErrorResponse>;
-    
+  if (isAxiosError(error)) {
     // サーバーからのエラーレスポンス
-    if (axiosError.response?.data?.error) {
-      return axiosError.response.data.error.message;
+    if (error.response?.data?.error) {
+      return error.response.data.error.message;
     }
-    
     // ネットワークエラー
-    if (axiosError.code === 'ECONNABORTED') {
+    if (error.code === 'ECONNABORTED') {
       return 'リクエストがタイムアウトしました。もう一度お試しください。';
     }
-    
-    if (!axiosError.response) {
+    if (!error.response) {
       return 'サーバーに接続できません。ネットワーク接続を確認してください。';
     }
-    
     // HTTPステータスによるメッセージ
-    switch (axiosError.response.status) {
+    switch (error.response.status) {
       case 400:
         return '入力内容に誤りがあります。';
       case 404:
@@ -42,10 +49,9 @@ const getErrorMessage = (error: unknown): string => {
       case 500:
         return 'サーバーエラーが発生しました。';
       default:
-        return `エラーが発生しました (${axiosError.response.status})`;
+        return `エラーが発生しました (${error.response.status})`;
     }
   }
-  
   return 'エラーが発生しました。';
 };
 

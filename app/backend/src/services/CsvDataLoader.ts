@@ -8,12 +8,7 @@ import { Readable } from 'stream';
 import { parse } from 'csv-parse';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import {
-  Location,
-  LocationType,
-  ModeType,
-  TransportMode
-} from '../lib/shared-types';
+import { Location, LocationType, ModeType, TransportMode } from '../lib/shared-types';
 
 // ShipLink interface for CSV data
 export interface ShipLink {
@@ -49,7 +44,7 @@ export class CsvDataLoader {
   private bucketName: string;
   private cache: Map<string, any> = new Map();
   private cacheEnabled: boolean;
-  private cacheExpiration: number = 3600000; // 1 hour default
+  // cacheExpirationは未使用のため削除
   private localDataPath?: string;
 
   constructor(config: CsvLoaderConfig) {
@@ -63,12 +58,7 @@ export class CsvDataLoader {
     this.cache.clear();
   }
 
-  setCacheExpiration(ms: number): void {
-    this.cacheExpiration = ms;
-    if (ms === 0) {
-      this.clearCache();
-    }
-  }
+  // setCacheExpirationは未使用のため削除
 
   /**
    * Load CSV data from local file (for development)
@@ -103,7 +93,7 @@ export class CsvDataLoader {
     // Load from S3
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
-      Key: key
+      Key: key,
     });
 
     const response = await this.s3Client.send(command);

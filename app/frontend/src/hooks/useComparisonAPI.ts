@@ -1,5 +1,17 @@
 import { useState } from 'react';
 import axios from 'axios';
+
+// axios.isAxiosErrorの代用型ガード
+function isAxiosError(
+  err: unknown
+): err is { isAxiosError: boolean; code?: string; response?: any; request?: any } {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'isAxiosError' in err &&
+    (err as any).isAxiosError === true
+  );
+}
 import type { ComparisonRequest, ComparisonResult, ErrorResponse } from '../types';
 
 interface UseComparisonAPIResult {
@@ -36,22 +48,18 @@ export const useComparisonAPI = (): UseComparisonAPIResult => {
     try {
       console.log(`API呼び出し: ${currentApiUrl}/compare`);
 
-      const response = await axios.post<ComparisonResult>(
-        `${currentApiUrl}/compare`,
-        request,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          timeout: 30000, // 30秒タイムアウト
-        }
-      );
+      const response = await axios.post<ComparisonResult>(`${currentApiUrl}/compare`, request, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 30000, // 30秒タイムアウト
+      });
 
       setResult(response.data);
     } catch (err) {
       console.error('API call failed:', err);
-      
-      if (axios.isAxiosError(err)) {
+      // 型ガードでisAxiosErrorを使い、以降は型安全にアクセス
+      if (isAxiosError(err)) {
         if (err.code === 'ECONNABORTED') {
           setError('リクエストがタイムアウトしました。しばらくしてから再試行してください。');
         } else if (err.response) {
@@ -75,7 +83,6 @@ export const useComparisonAPI = (): UseComparisonAPIResult => {
             }
           }
         } else if (err.request) {
-          // ネットワークエラー
           setError('サーバーに接続できません。インターネット接続を確認してください。');
         } else {
           setError('予期しないエラーが発生しました。');

@@ -16,11 +16,14 @@ const HOST = process.env.HOST || 'localhost';
 // Create Express app
 const app = createApp();
 
+// PORTをnumber型に変換
+const port = typeof PORT === 'string' ? parseInt(PORT, 10) : PORT;
+
 // Start server
-const server = app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server running on http://${HOST}:${PORT} in ${NODE_ENV} mode`);
-  console.log(`📍 Health check: http://${HOST}:${PORT}/health`);
-  console.log(`🔄 Compare endpoint: http://${HOST}:${PORT}/compare`);
+const server = app.listen(port, HOST, () => {
+  console.log(`🚀 Server running on http://${HOST}:${port} in ${NODE_ENV} mode`);
+  console.log(`📍 Health check: http://${HOST}:${port}/health`);
+  console.log(`🔄 Compare endpoint: http://${HOST}:${port}/compare`);
   console.log(`🌐 CORS origin: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
 });
 
