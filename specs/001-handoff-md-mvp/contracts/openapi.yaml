@@ -14,6 +14,59 @@ servers:
     description: Production API
 
 paths:
+  /locations:
+    get:
+      summary: Get available cities
+      description: |
+        Returns a list of cities available for route comparison.
+        Only returns cities (type=city), not ports.
+      operationId: getLocations
+      tags:
+        - Locations
+      responses:
+        '200':
+          description: List of available cities
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - locations
+                properties:
+                  locations:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - id
+                        - name
+                      properties:
+                        id:
+                          type: string
+                          description: Unique identifier for the city
+                          example: "1"
+                        name:
+                          type: string
+                          description: Name of the city
+                          example: "Tokyo"
+              examples:
+                success:
+                  summary: Successful response with cities
+                  value:
+                    locations:
+                      - id: "1"
+                        name: "Tokyo"
+                      - id: "2"
+                        name: "Osaka"
+                      - id: "5"
+                        name: "Nagoya"
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /compare:
     post:
       summary: Compare transportation routes
