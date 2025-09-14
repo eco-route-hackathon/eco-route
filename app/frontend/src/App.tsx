@@ -67,9 +67,14 @@ function App() {
         </div>
       </header>
 
-      {/* 日本地図を最初に表示 */}
+      {/* 日本地図を最初に表示。おすすめルートがあれば反映 */}
       <div style={{ margin: '24px 0' }}>
-        <JapanMap />
+        <JapanMap
+          recommendedLegs={
+            (result && result.candidates.find((c) => c.plan === result.recommendation)?.legs) ||
+            undefined
+          }
+        />
       </div>
 
       {/* メインコンテンツ */}
