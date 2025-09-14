@@ -1,17 +1,10 @@
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 
-// axios.isAxiosErrorの代用型ガード
-function isAxiosError(
-  err: unknown
-): err is { isAxiosError: boolean; code?: string; response?: any; request?: any } {
-  return (
-    typeof err === 'object' &&
-    err !== null &&
-    'isAxiosError' in err &&
-    (err as any).isAxiosError === true
-  );
+// AxiosError 型ガード（公式ユーティリティを利用）
+function isAxiosError(err: unknown): err is AxiosError<ErrorResponse> {
+  return axios.isAxiosError(err);
 }
-import type { ComparisonRequest, ComparisonResult } from '../types';
+import type { ComparisonRequest, ComparisonResult, ErrorResponse } from '../types';
 
 // API設定
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
