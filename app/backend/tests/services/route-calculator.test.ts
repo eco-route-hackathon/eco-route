@@ -500,7 +500,7 @@ describe('RouteCalculator Service', () => {
       expect(routes.length).toBe(6); // 4 cities = 6 routes
     });
 
-    it.skip('should implement request throttling for AWS API limits', async () => {
+    it('should implement request throttling for AWS API limits', async () => {
       // TODO(#issue-1): Fine-tune request throttling timing
       // Currently completes in 202ms instead of expected 1000ms+
       let requestCount = 0;
