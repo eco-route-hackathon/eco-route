@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Frontend development**: `cd app/frontend && npm install && npm run dev` - Run Vite dev server for React frontend
 - **Backend development**: `cd app/backend && npm install && npm run dev` - Run ts-node/local server for Node.js backend
 - **Build**: `npm run build` in each package directory - Output to `dist/`
-- **Test**: `npm test` in each package - Uses Vitest/Jest
+- **Test (local)**: `npm test` in each package - Uses Vitest/Jest
+- **Test (agent/CI)**: Always run `npm run test:ci` to avoid watch/interactive mode hangs
 - **Lint**: `npm run lint` - ESLint with @typescript-eslint
 - **Format**: `npm run format` - Prettier formatting
 
@@ -66,6 +67,12 @@ This is an eco-route MVP project comparing truck vs truck+ship transportation wi
 - Frontend: Testing Library + Vitest
 - Backend: Vitest/Jest + supertest
 - Target: 80%+ coverage for critical paths, at least 1 E2E test for `/compare`
+
+### Agent Test Execution Policy
+- Always use `npm run test:ci` in each package. Do not use watch/interactive modes.
+- Backend example: `cd app/backend && npm run test:ci` (runs `vitest run --reporter=dot`).
+- Frontend example: `cd app/frontend && npm run test:ci`.
+- If tests rely on dev servers or long‑running processes, refactor to pure test runners and ensure processes exit cleanly.
 
 ### Environment Variables
 Required for backend:

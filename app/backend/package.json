@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest",
+    "test:ci": "vitest run --reporter=dot",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
     "lint": "eslint src --ext .ts",
