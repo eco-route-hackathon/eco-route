@@ -34,19 +34,23 @@
 .spinnerInner {
   position: relative;
   border-radius: 50%;
-  border: 3px solid #e8f0fe;
-  border-top: 3px solid #4CAF50;
+  border: 3px solid #7f9db9;
+  border-top: 3px solid #245edb;
   animation: spin 2s linear infinite;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #e3eefd;
+  box-shadow: 0 2px 8px #b0c4de;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 中央のアイコン */
@@ -66,9 +70,17 @@
 }
 
 @keyframes fade {
-  0%, 45% { opacity: 1; }
-  50%, 95% { opacity: 0; }
-  100% { opacity: 1; }
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* ドットアニメーション */
@@ -81,7 +93,7 @@
 .dot {
   width: 8px;
   height: 8px;
-  background: #4CAF50;
+  background: #4caf50;
   border-radius: 50%;
   animation: bounce 1.4s ease-in-out infinite both;
 }
@@ -95,7 +107,9 @@
 }
 
 @keyframes bounce {
-  0%, 80%, 100% {
+  0%,
+  80%,
+  100% {
     transform: scale(0);
     opacity: 0.5;
   }
@@ -116,8 +130,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* サイズ別調整 */
@@ -145,12 +164,12 @@
     width: 60px;
     height: 60px;
   }
-  
+
   .spinner.medium .truck,
   .spinner.medium .ship {
     font-size: 1.25rem;
   }
-  
+
   .message {
     font-size: 0.9rem;
   }
@@ -160,20 +179,20 @@
 @media (prefers-reduced-motion: reduce) {
   .spinnerInner {
     animation: none;
-    border: 3px solid #4CAF50;
+    border: 3px solid #4caf50;
   }
-  
+
   .truck,
   .ship {
     animation: none;
   }
-  
+
   .dot {
     animation: none;
     opacity: 1;
     transform: scale(1);
   }
-  
+
   .message {
     animation: none;
     opacity: 1;

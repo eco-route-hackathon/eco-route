@@ -3,6 +3,10 @@
   margin: 0 auto;
   padding: 1rem;
   will-change: contents;
+  background: #f6f6f6;
+  border-radius: 8px 8px 6px 6px;
+  box-shadow: 2px 2px 8px #b0c4de;
+  border: 2px solid #3a6ea5;
 }
 
 /* ローディング状態 */
@@ -12,9 +16,9 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #e3eefd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px #b0c4de;
 }
 
 .loadingText {
@@ -31,9 +35,9 @@
   align-items: center;
   justify-content: center;
   padding: 3rem 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #e3eefd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px #b0c4de;
   border-left: 4px solid #e74c3c;
 }
 
@@ -126,6 +130,54 @@
   font-weight: 700;
   color: #2c3e50;
   margin: 0;
+}
+
+.testButton {
+  padding: 0.4rem 0.75rem;
+  background: linear-gradient(90deg, #ff8a65, #ff7043);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 100, 50, 0.18);
+}
+
+.testButton:hover {
+  transform: translateY(-2px);
+}
+
+.floatingTestButtonContainer {
+  position: fixed;
+  right: 20px;
+  bottom: 30px;
+  z-index: 10000;
+}
+
+.secondaryTestButton {
+  margin-left: 8px;
+  padding: 0.4rem 0.75rem;
+  background: linear-gradient(90deg, #ffd54f, #ffb300);
+  color: #332300;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(255, 180, 40, 0.18);
+}
+
+.restPanel {
+  position: fixed;
+  left: 20px;
+  bottom: 30px;
+  width: 320px;
+  max-height: 60vh;
+  overflow: auto;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  z-index: 10000;
 }
 
 .metadata {
@@ -245,7 +297,7 @@
   padding: 1rem;
   background: #f8f9fb;
   border-radius: 8px;
-  border-left: 3px solid #4CAF50;
+  border-left: 3px solid #4caf50;
 }
 
 .legMode {
@@ -268,6 +320,16 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   margin-left: 0.5rem;
+}
+
+.restSuggestion {
+  margin-top: 0.6rem;
+  background: #fff9f4;
+  border-left: 4px solid #ff8a65;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #4a2b1d;
 }
 
 /* レスポンシブ対応 */
