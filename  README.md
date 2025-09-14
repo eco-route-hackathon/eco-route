@@ -114,6 +114,38 @@ eco-route/
 │   └── infra/             # AWS CDK（将来実装）
 ├── specs/                 # 仕様書・設計資料
 └── オープンデータ/          # 政府公開データ
+
+## 🔄 オープンデータの正規CSVへの変換
+
+政府公開データ（オープンデータ）から、アプリが参照する正規CSV（locations/links/modes）を生成できます。
+
+1) 変換の実行（app/backend 配下）
+```bash
+cd app/backend
+npm install
+npm run convert:open-data
+```
+
+2) ローカル起動時に生成CSVを参照
+```bash
+# _processed データを参照して起動
+npm run dev:opendata
+
+# もしくは環境変数で明示
+LOCAL_DATA_PATH=../../オープンデータ/_processed npm run dev
+```
+
+3) 出力場所
+```
+オープンデータ/_processed/
+  ├─ locations.csv   # 都市+港
+  ├─ links.csv       # 港間リンク（距離/時間）
+  └─ modes.csv       # モード係数（コスト/CO2/速度）
+```
+
+備考:
+- 係数（CO2/コスト/速度）はオープンデータに直接含まれないため、modes.csv で管理しています（MVP既定値を出力）。
+- 列名は CsvDataLoader 実装に合わせて厳密に定義されています。
 ```
 
 ## 📝 API仕様

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:local": "LOCAL_DATA_PATH=./data tsx watch src/server.ts",
+    "dev:opendata": "LOCAL_DATA_PATH=../../オープンデータ/_processed tsx watch src/server.ts",
+    "convert:open-data": "tsx scripts/convert-open-data.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "vitest",
