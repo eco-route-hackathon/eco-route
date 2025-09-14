@@ -360,21 +360,18 @@ export class ScoreOptimizer {
   }
 
   /**
-   * Batch compare multiple plan sets efficiently
+   * Batch compare single plan set with multiple weight configurations
    */
-  async batchCompare(
-    planSets: Array<{ plans: TransportPlan[]; weights: WeightFactors }>
-  ): Promise<ComparisonDetail[]> {
+  batchCompare(
+    plans: TransportPlan[],
+    weightSets: WeightFactors[]
+  ): ComparisonDetail[] {
     const results: ComparisonDetail[] = [];
 
-    // Process in batches for efficiency
-    const batchSize = 10;
-    for (let i = 0; i < planSets.length; i += batchSize) {
-      const batch = planSets.slice(i, i + batchSize);
-      const batchResults = await Promise.all(
-        batch.map((set) => Promise.resolve(this.comparePlans(set.plans, set.weights)))
-      );
-      results.push(...batchResults);
+    // Compare plans with each weight configuration
+    for (const weights of weightSets) {
+      const comparison = this.comparePlans(plans, weights);
+      results.push(comparison);
     }
 
     return results;
