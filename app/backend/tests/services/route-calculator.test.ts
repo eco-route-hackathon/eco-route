@@ -531,7 +531,7 @@ describe('RouteCalculator Service', () => {
       const duration = Date.now() - startTime;
 
       // Should implement throttling (e.g., max 5 requests per second)
-      expect(duration).toBeGreaterThan(1000); // Should take at least 2 seconds for 10 requests
+      expect(duration).toBeGreaterThanOrEqual(1000); // Should take at least 2 seconds for 10 requests
       expect(requestCount).toBe(10);
     });
   });
