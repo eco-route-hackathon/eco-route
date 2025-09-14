@@ -281,45 +281,58 @@ export class ScoreOptimizer {
   /**
    * Analyze sensitivity to weight changes
    */
-  analyzeSensitivity(plans: TransportPlan[], _baseWeights: WeightFactors): any {
-    const results: any = {
-      thresholds: {},
-      recommendations: [],
+  analyzeSensitivity(plans: TransportPlan[]): {
+    timeThreshold: number | null;
+    costThreshold: number | null;
+    co2Threshold: number | null;
+  } {
+    const findThreshold = (dimension: 'time' | 'cost' | 'co2'): number | null => {
+      let low = 0;
+      let high = 1;
+      const epsilon = 0.001;
+      const maxIterations = 100;
+      let iterations = 0;
+
+      // Get baseline recommendation with very small weight for this dimension
+      const baselineWeights = {
+        time: dimension === 'time' ? epsilon : (1 - epsilon) / 2,
+        cost: dimension === 'cost' ? epsilon : (1 - epsilon) / 2,
+        co2: dimension === 'co2' ? epsilon : (1 - epsilon) / 2
+      };
+      const baselineResult = this.comparePlans(plans, baselineWeights);
+
+      // Binary search for the threshold where recommendation changes
+      while (high - low > epsilon && iterations < maxIterations) {
+        const mid = (low + high) / 2;
+
+        // Create weights with this dimension at mid, others balanced
+        const testWeights = {
+          time: dimension === 'time' ? mid : (1 - mid) / 2,
+          cost: dimension === 'cost' ? mid : (1 - mid) / 2,
+          co2: dimension === 'co2' ? mid : (1 - mid) / 2
+        };
+
+        const result = this.comparePlans(plans, testWeights);
+
+        // If recommendation changed, we found the threshold region
+        if (result.recommendation !== baselineResult.recommendation) {
+          high = mid;
+        } else {
+          low = mid;
+        }
+
+        iterations++;
+      }
+
+      // Return the threshold, or null if no change point found
+      return iterations < maxIterations ? (low + high) / 2 : null;
     };
 
-    // Test different weight configurations
-    const weightVariations = [
-      { time: 0.8, cost: 0.1, co2: 0.1 },
-      { time: 0.6, cost: 0.3, co2: 0.1 },
-      { time: 0.4, cost: 0.4, co2: 0.2 },
-      { time: 0.2, cost: 0.4, co2: 0.4 },
-      { time: 0.1, cost: 0.2, co2: 0.7 },
-    ];
-
-    for (const weights of weightVariations) {
-      const result = this.comparePlans(plans, weights);
-      results.recommendations.push({
-        weights,
-        recommendation: result.recommendation,
-        scores: result.scores,
-      });
-    }
-
-    // Find threshold where recommendation changes
-    let lastRecommendation = results.recommendations[0].recommendation;
-    for (let i = 1; i < results.recommendations.length; i++) {
-      if (results.recommendations[i].recommendation !== lastRecommendation) {
-        results.thresholds[`change_${i}`] = {
-          from: lastRecommendation,
-          to: results.recommendations[i].recommendation,
-          weightsBefore: weightVariations[i - 1],
-          weightsAfter: weightVariations[i],
-        };
-        lastRecommendation = results.recommendations[i].recommendation;
-      }
-    }
-
-    return results;
+    return {
+      timeThreshold: findThreshold('time'),
+      costThreshold: findThreshold('cost'),
+      co2Threshold: findThreshold('co2')
+    };
   }
 
   /**
