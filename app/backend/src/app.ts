@@ -6,6 +6,7 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { compareHandler } from './api/compare-handler';
+import { routeRecommendationsHandler } from './api/route-recommendations-handler';
 import { errorHandler } from './middleware/error-handler';
 
 /**
@@ -31,8 +32,9 @@ export function createApp(): Express {
     });
   });
 
-  // Main API endpoint
+  // Main API endpoints
   app.post('/compare', compareHandler);
+  app.post('/route/recommendations', routeRecommendationsHandler);
 
   // Error handling middleware (must be last)
   app.use(errorHandler);

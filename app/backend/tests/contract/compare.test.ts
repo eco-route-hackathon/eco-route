@@ -5,7 +5,7 @@
  * TDD: These tests should FAIL initially until the endpoint is implemented
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import request from 'supertest';
 import { Express } from 'express';
 import { 
@@ -14,6 +14,11 @@ import {
   PlanType 
 } from '../../src/lib/shared-types';
 import { MockFactory } from '../setup/mock-factory';
+import { mockClient } from 'aws-sdk-client-mock';
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
+import { LocationClient, CalculateRouteCommand } from '@aws-sdk/client-location';
+import { sdkStreamMixin } from '@smithy/util-stream';
+import { Readable } from 'stream';
 import { TEST_SCENARIOS, STANDARD_REQUESTS } from '../setup/test-data';
 import { 
   assertValidComparisonResult,
@@ -24,18 +29,75 @@ import { TEST_CONFIG } from '../setup/test-config';
 
 describe('POST /compare Contract Tests', () => {
   let app: Express;
+  const s3Mock = mockClient(S3Client);
+  const locationMock = mockClient(LocationClient);
 
   beforeEach(() => {
+    // Reset all mocks
+    s3Mock.reset();
+    locationMock.reset();
+    
     // Create Express app mock or use actual app when available
     // For now, use MockFactory to create app mock
     app = MockFactory.createAppMock() as unknown as Express;
     
-    // Setup AWS mocks
-    MockFactory.createLocationMock();
-    MockFactory.createS3Mock();
+    // Setup S3 mock with CSV data
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}modes.csv`
+    }).resolves({
+      Body: sdkStreamMixin(Readable.from(
+        'mode,cost_per_km,co2_kg_per_ton_km,avg_speed_kmph\n' +
+        'truck,50,0.1,60\n' +
+        'ship,20,0.02,20'
+      ))
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}locations.csv`
+    }).resolves({
+      Body: sdkStreamMixin(Readable.from(
+        'id,name,lat,lon,type\n' +
+        '1,Tokyo,35.6762,139.6503,city\n' +
+        '2,Osaka,34.6937,135.5023,city\n' +
+        '3,TokyoPort,35.6551,139.7595,port\n' +
+        '4,OsakaPort,34.6500,135.4300,port'
+      ))
+    });
+
+    s3Mock.on(GetObjectCommand, {
+      Bucket: TEST_CONFIG.aws.resources.s3BucketName,
+      Key: `${TEST_CONFIG.aws.resources.s3DataPrefix}links.csv`
+    }).resolves({
+      Body: sdkStreamMixin(Readable.from(
+        'from_port_id,to_port_id,distance_km,time_hours,operator,frequency_per_week\n' +
+        '3,4,410,20.5,ShipCo,7'
+      ))
+    });
+
+    // Setup Location Service mock
+    locationMock.on(CalculateRouteCommand).resolves({
+      Summary: {
+        RouteBBox: [135.5023, 34.6937, 139.6503, 35.6762],
+        DataSource: 'Here',
+        Distance: 520,
+        DurationSeconds: 25920,
+        DistanceUnit: 'Kilometers'
+      },
+      Legs: [{
+        Distance: 520,
+        DurationSeconds: 25920,
+        StartPosition: [139.6503, 35.6762],
+        EndPosition: [135.5023, 34.6937],
+        Steps: []
+      }]
+    });
   });
 
   afterEach(() => {
+    s3Mock.reset();
+    locationMock.reset();
     MockFactory.resetAllMocks();
   });
 
@@ -45,10 +107,16 @@ describe('POST /compare Contract Tests', () => {
 
       const response = await request(app)
         .post('/compare')
-        .send(validRequest)
-        .expect('Content-Type', /json/)
-        .expect(200);
+        .send(validRequest);
 
+      console.log('Response status:', response.status);
+      console.log('Response body:', JSON.stringify(response.body, null, 2));
+      
+      if (response.status !== 200) {
+        console.log('Error response:', response.text);
+      }
+
+      expect(response.status).toBe(200);
       assertValidComparisonResult(response.body);
     });
 

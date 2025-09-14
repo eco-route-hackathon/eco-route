@@ -1,0 +1,11 @@
+id,name,type,lat,lon,address,distance_from_route,facilities,estimated_stop_time,opening_hours,description
+sa_001,東名高速 海老名SA,service_area,35.4658,139.6205,神奈川県海老名市海老名1-1-1,0.2,restroom;parking;gas_station;restaurant;convenience_store,20,24/7,東名高速道路の大型サービスエリア
+sa_002,中央道 談合坂SA,service_area,35.6369,138.9542,山梨県甲州市大和町談合坂,0.1,restroom;parking;gas_station;restaurant,15,24/7,中央自動車道のサービスエリア
+sa_003,名神高速 大津SA,service_area,35.0116,135.7681,滋賀県大津市大津1-1-1,0.3,restroom;parking;gas_station;restaurant;convenience_store;wifi,25,24/7,名神高速道路のサービスエリア
+sa_004,中国道 吉備SA,service_area,34.6937,135.5023,岡山県岡山市北区吉備津1-1-1,0.4,restroom;parking;gas_station;restaurant,18,24/7,中国自動車道のサービスエリア
+sa_005,九州道 太宰府SA,service_area,33.5904,130.4017,福岡県太宰府市太宰府1-1-1,0.2,restroom;parking;gas_station;restaurant;convenience_store,22,24/7,九州自動車道のサービスエリア
+sa_006,東北道 羽生PA,service_area,36.2048,138.2529,埼玉県羽生市羽生1-1-1,0.5,restroom;parking;gas_station,12,24/7,東北自動車道のパーキングエリア
+sa_007,常磐道 谷田部SA,service_area,36.1815,136.9066,茨城県つくば市谷田部1-1-1,0.3,restroom;parking;gas_station;restaurant,16,24/7,常磐自動車道のサービスエリア
+sa_008,道央道 恵庭SA,service_area,43.0642,141.3469,北海道恵庭市恵庭1-1-1,0.6,restroom;parking;gas_station;restaurant;convenience_store,30,24/7,道央自動車道のサービスエリア
+sa_009,新東名 駿河湾沼津SA,service_area,35.1706,136.8816,静岡県沼津市沼津1-1-1,0.4,restroom;parking;gas_station;restaurant;wifi,20,24/7,新東名高速道路のサービスエリア
+sa_010,山陽道 姫路SA,service_area,34.6901,135.1956,兵庫県姫路市姫路1-1-1,0.7,restroom;parking;gas_station;restaurant;convenience_store,25,24/7,山陽自動車道のサービスエリア

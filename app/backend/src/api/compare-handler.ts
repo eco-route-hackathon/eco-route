@@ -24,7 +24,11 @@ import { ShipLink } from '../services/CsvDataLoader';
 // Initialize services (in production, these would be dependency injected)
 const csvLoader = new CsvDataLoader({
   bucketName: process.env.S3_BUCKET || 'eco-route-data',
-  region: process.env.AWS_REGION || 'ap-northeast-1'
+  region: process.env.AWS_REGION || 'ap-northeast-1',
+  // Use local files in test environment
+  localDataPath: process.env.NODE_ENV === 'test' ? './data' : undefined,
+  // In test environment, s3Client will be injected by test setup
+  s3Client: process.env.NODE_ENV === 'test' ? undefined : undefined
 });
 
 const routeCalculator = new RouteCalculator({
@@ -201,10 +205,15 @@ function findLocation(locations: Location[], name: string): Location | undefined
  * Find ship link between ports
  */
 function findShipLink(
-  links: ShipLink[], 
-  fromPortId: string, 
+  links: ShipLink[],
+  fromPortId: string,
   toPortId: string
 ): ShipLink | undefined {
+  // Check for undefined or null IDs
+  if (!fromPortId || !toPortId) {
+    return undefined;
+  }
+  
   // Normalize IDs for comparison (handle both numeric and string IDs)
   const normalizeId = (id: string) => id.toString().trim();
   const fromId = normalizeId(fromPortId);

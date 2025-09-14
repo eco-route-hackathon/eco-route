@@ -1,0 +1,11 @@
+id,name,type,cuisine,price_range,lat,lon,address,rating,distance_from_route,estimated_stop_time,amenities,opening_hours,description
+rest_001,東京駅ラーメン街,restaurant,japanese,medium,35.6812,139.7671,東京都千代田区丸の内1-9-1,4.2,0.5,45,parking;restroom;wifi,06:00-23:00,東京駅構内の人気ラーメン店
+rest_002,横浜中華街 陳家,restaurant,chinese,high,35.4369,139.6503,神奈川県横浜市中区山下町149,4.5,1.2,60,parking;restroom,11:00-21:00,横浜中華街の老舗中華料理店
+rest_003,名古屋味噌カツ専門店,restaurant,japanese,medium,35.1706,136.8816,愛知県名古屋市中区錦3-15-30,4.0,0.8,40,parking;restroom,11:00-20:00,名古屋名物味噌カツの専門店
+rest_004,大阪たこ焼き屋,restaurant,japanese,low,34.6937,135.5023,大阪府大阪市中央区道頓堀1-7-21,4.3,0.3,30,restroom,10:00-22:00,大阪の名物たこ焼き屋
+rest_005,神戸ステーキハウス,restaurant,western,high,34.6901,135.1956,兵庫県神戸市中央区下山手通2-13-1,4.4,1.5,90,parking;restroom;wifi,17:00-23:00,神戸牛の本格ステーキハウス
+rest_006,京都懐石料理 花月,restaurant,japanese,high,35.0116,135.7681,京都府京都市東山区祇園町南側570-119,4.6,2.0,120,parking;restroom,12:00-21:00,京都の老舗懐石料理店
+rest_007,福岡もつ鍋専門店,restaurant,japanese,medium,33.5904,130.4017,福岡県福岡市博多区博多駅前3-1-1,4.1,0.7,50,parking;restroom,17:00-24:00,福岡名物もつ鍋の専門店
+rest_008,札幌ラーメン共和国,restaurant,japanese,medium,43.0642,141.3469,北海道札幌市中央区北5条西2-5,4.0,1.1,45,parking;restroom,11:00-22:00,札幌の名店ラーメンが集まる施設
+rest_009,コンビニ セブンイレブン 東京駅前,convenience_store,fast_food,low,35.6812,139.7671,東京都千代田区丸の内1-1-1,3.5,0.1,10,parking;restroom;wifi,24/7,24時間営業のコンビニエンスストア
+rest_010,マクドナルド 横浜港店,fast_food,fast_food,low,35.4658,139.6205,神奈川県横浜市西区みなとみらい2-2-1,3.8,0.4,15,parking;restroom;wifi,24/7,ファストフードチェーン

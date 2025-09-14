@@ -31,6 +31,7 @@ interface CsvLoaderConfig {
   region: string;
   cacheEnabled?: boolean;
   localDataPath?: string; // For local development
+  s3Client?: S3Client; // For testing - inject mock client
 }
 
 interface LoadOptions {
@@ -56,7 +57,7 @@ export class CsvDataLoader {
     this.bucketName = config.bucketName;
     this.cacheEnabled = config.cacheEnabled ?? true;
     this.localDataPath = config.localDataPath;
-    this.s3Client = new S3Client({ region: config.region });
+    this.s3Client = config.s3Client || new S3Client({ region: config.region });
   }
 
   clearCache(): void {

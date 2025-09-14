@@ -157,6 +157,105 @@ export const normalizeWeights = (weights: WeightFactors): WeightFactors => {
   };
 };
 
+// ============= Route Recommendations =============
+
+/**
+ * Restaurant recommendation along a route
+ */
+export interface RestaurantRecommendation {
+  id: string;
+  name: string;
+  type: 'restaurant' | 'cafe' | 'fast_food' | 'convenience_store';
+  cuisine: string[];
+  priceRange: 'low' | 'medium' | 'high';
+  location: {
+    lat: number;
+    lon: number;
+    address: string;
+  };
+  rating: number;
+  distanceFromRoute: number; // km
+  estimatedStopTime: number; // minutes
+  amenities: string[];
+  openingHours: string;
+  description?: string;
+}
+
+/**
+ * Service area recommendation along a route
+ */
+export interface ServiceAreaRecommendation {
+  id: string;
+  name: string;
+  type: 'service_area' | 'rest_area' | 'parking_area';
+  location: {
+    lat: number;
+    lon: number;
+    address: string;
+  };
+  distanceFromRoute: number; // km
+  facilities: string[]; // ['restroom', 'parking', 'gas_station', 'restaurant']
+  estimatedStopTime: number; // minutes
+  openingHours: string;
+  description?: string;
+}
+
+/**
+ * Attraction recommendation along a route
+ */
+export interface AttractionRecommendation {
+  id: string;
+  name: string;
+  type: 'tourist_spot' | 'landmark' | 'museum' | 'park';
+  location: {
+    lat: number;
+    lon: number;
+    address: string;
+  };
+  distanceFromRoute: number; // km
+  estimatedVisitTime: number; // minutes
+  rating: number;
+  category: string[];
+  description?: string;
+}
+
+/**
+ * Route recommendation preferences
+ */
+export interface RecommendationPreferences {
+  foodTypes?: string[]; // ['japanese', 'western', 'chinese', 'fast_food']
+  priceRange?: 'low' | 'medium' | 'high';
+  amenities?: string[]; // ['parking', 'restroom', 'wifi', 'accessible']
+  maxDistanceFromRoute?: number; // km
+  maxStopTime?: number; // minutes
+  includeAttractions?: boolean;
+}
+
+/**
+ * Complete route recommendations response
+ */
+export interface RouteRecommendations {
+  routeId: string;
+  totalDistance: number; // km
+  estimatedDuration: number; // hours
+  recommendations: {
+    restaurants: RestaurantRecommendation[];
+    serviceAreas: ServiceAreaRecommendation[];
+    attractions: AttractionRecommendation[];
+  };
+  summary: {
+    totalRestaurants: number;
+    totalServiceAreas: number;
+    totalAttractions: number;
+    recommendedStops: number;
+  };
+  metadata: {
+    generatedAt: string;
+    dataVersion: string;
+    algorithmVersion: string;
+  };
+}
+
 /**
  * Type guard for error response
  */

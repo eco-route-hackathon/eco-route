@@ -161,6 +161,101 @@ export const normalizeWeights = (weights: WeightFactors): WeightFactors => {
   };
 };
 
+// ============= Route Recommendation Types =============
+
+/**
+ * Represents a restaurant recommendation along a route
+ */
+export interface RestaurantRecommendation {
+  id: string;
+  name: string;
+  type: 'restaurant' | 'fast_food' | 'convenience_store';
+  cuisine: string;
+  priceRange: 'low' | 'medium' | 'high';
+  lat: number;
+  lon: number;
+  address: string;
+  rating: number;
+  distanceFromRoute: number;
+  estimatedStopTime: number;
+  amenities: string[];
+  openingHours: string;
+  description?: string;
+}
+
+/**
+ * Represents a service area recommendation along a route
+ */
+export interface ServiceAreaRecommendation {
+  id: string;
+  name: string;
+  type: 'service_area' | 'parking_area';
+  lat: number;
+  lon: number;
+  address: string;
+  distanceFromRoute: number;
+  facilities: string[];
+  estimatedStopTime: number;
+  openingHours: string;
+  description?: string;
+}
+
+/**
+ * Represents an attraction recommendation along a route
+ */
+export interface AttractionRecommendation {
+  id: string;
+  name: string;
+  type: 'tourist_spot' | 'park' | 'shopping' | 'entertainment';
+  lat: number;
+  lon: number;
+  address: string;
+  distanceFromRoute: number;
+  estimatedVisitTime: number;
+  rating: number;
+  category: string[];
+  description?: string;
+}
+
+/**
+ * User preferences for route recommendations
+ */
+export interface RecommendationPreferences {
+  maxDistanceFromRoute: number;
+  preferredCuisines?: string[];
+  preferredAmenities?: string[];
+  preferredAttractionTypes?: string[];
+  maxStopTime?: number;
+}
+
+/**
+ * Complete route recommendations response
+ */
+export interface RouteRecommendations {
+  routeId: string;
+  restaurants: RestaurantRecommendation[];
+  serviceAreas: ServiceAreaRecommendation[];
+  attractions: AttractionRecommendation[];
+  metadata?: {
+    totalRecommendations: number;
+    averageRating: number;
+    calculationTimeMs: number;
+  };
+}
+
+/**
+ * Request for route recommendations
+ */
+export interface RecommendationRequest {
+  route: {
+    origin: string;
+    destination: string;
+    weightKg: number;
+    weights: WeightFactors;
+  };
+  preferences?: RecommendationPreferences;
+}
+
 // ============= Frontend-Specific Types =============
 
 /**
