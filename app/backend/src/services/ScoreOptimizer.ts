@@ -325,27 +325,31 @@ export class ScoreOptimizer {
   /**
    * Identify dominant factors in decision
    */
-  identifyDominantFactors(plans: TransportPlan[], weights: WeightFactors): any {
-    const factors: any = {};
-    const breakdown = this.getScoreBreakdown(plans, weights);
+  identifyDominantFactors(plans: TransportPlan[]): Record<string, string[]> {
+    const factors: Record<string, string[]> = {};
 
-    for (const planKey of Object.keys(breakdown)) {
-      const components = breakdown[planKey];
+    for (const plan of plans) {
+      const planKey = plan.plan === PlanType.TRUCK ? 'truck' : 'truck+ship';
       const dominantFactors: string[] = [];
 
-      // Find which component contributes most to the score
-      const contributions = [
-        { factor: 'time', value: components.timeComponent },
-        { factor: 'cost', value: components.costComponent },
-        { factor: 'co2', value: components.co2Component },
-      ];
+      // Compare against other plans to find advantages
+      for (const otherPlan of plans) {
+        if (plan === otherPlan) continue;
 
-      contributions.sort((a, b) => b.value - a.value);
+        // Calculate relative advantages (>1 means this plan is better)
+        const timeAdvantage = otherPlan.timeH / plan.timeH;
+        const costAdvantage = otherPlan.costJpy / plan.costJpy;
+        const co2Advantage = otherPlan.co2Kg / plan.co2Kg;
 
-      // Add dominant factors (those contributing more than 30% of score)
-      for (const contrib of contributions) {
-        if (contrib.value / components.totalScore > 0.3) {
-          dominantFactors.push(contrib.factor);
+        // Consider 1.5x or better as dominant advantage
+        if (timeAdvantage >= 1.5 && !dominantFactors.includes('time')) {
+          dominantFactors.push('time');
+        }
+        if (costAdvantage >= 1.5 && !dominantFactors.includes('cost')) {
+          dominantFactors.push('cost');
+        }
+        if (co2Advantage >= 1.5 && !dominantFactors.includes('co2')) {
+          dominantFactors.push('co2');
         }
       }
 
