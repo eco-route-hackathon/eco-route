@@ -1,5 +1,6 @@
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { MAP_LOCATIONS } from './mapLocations';
 
 const JAPAN_CENTER: [number, number] = [36.2048, 138.2529]; // 日本の中心座標
 
@@ -28,6 +29,23 @@ const JapanMap = () => {
       />
       {/* サンプルルートをGeoJSONで描画 */}
       <GeoJSON data={sampleRoute} style={{ color: 'red', weight: 4 }} />
+      {/* 地点ごとに赤丸（内陸）・青丸（港）を表示 */}
+      {MAP_LOCATIONS.map((loc) => (
+        <CircleMarker
+          key={loc.name}
+          center={[loc.lat, loc.lon]}
+          radius={10}
+          pathOptions={{
+            color: loc.type === 'port' ? '#0074D9' : '#FF4136',
+            fillColor: loc.type === 'port' ? '#0074D9' : '#FF4136',
+            fillOpacity: 0.7,
+          }}
+        >
+          <Tooltip direction="top" offset={[0, -10]}>
+            {loc.name}
+          </Tooltip>
+        </CircleMarker>
+      ))}
     </MapContainer>
   );
 };
